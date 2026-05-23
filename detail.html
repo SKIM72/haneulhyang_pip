@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>하늘향 - 제품 상세소개</title>
+    
+    <link rel="icon" type="image/png" href="./assets/favicon.png">
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script id="tailwind-config">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#17341c",
+                        "background": "#fcf9f8",
+                        "surface": "#ffffff",
+                        "on-background": "#1c1b1b",
+                        "on-surface-variant": "#424841",
+                        "outline-variant": "#c2c8bf"
+                    },
+                    fontFamily: {
+                        "headline": ["EB Garamond"],
+                        "body": ["Hanken Grotesk"]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Hanken Grotesk', sans-serif; }
+        .headline-font { font-family: 'EB Garamond', serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        
+        /* 에디터 본문 전용 스타일 */
+        .post-body { line-height: 1.8; color: #1c1b1b; font-size: 1.05rem; }
+        .post-body img { max-width: 100%; border-radius: 0.75rem; margin: 1.5rem auto; display: block; box-shadow: 0 12px 32px rgba(27, 61, 47, 0.05); }
+        .post-body h1 { font-size: 1.8rem; font-weight: bold; color: #17341c; margin: 2.5rem 0 1rem 0; }
+        .post-body h2 { font-size: 1.5rem; font-weight: bold; color: #17341c; margin: 2rem 0 1rem 0; }
+        .post-body p { margin-bottom: 1.2rem; }
+        .post-body ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1.2rem; }
+        .post-body ol { list-style-type: decimal; padding-left: 1.5rem; margin-bottom: 1.2rem; }
+        .post-body a { color: #17341c; text-decoration: underline; font-weight: 600; }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col antialiased">
+
+    <nav class="fixed top-0 w-full z-50 flex justify-between items-center px-6 py-4 bg-background/90 backdrop-blur-md border-b border-outline-variant/30">
+        <div class="flex items-center gap-4">
+            <a href="index.html" class="block h-14 w-14 rounded-full overflow-hidden bg-white shadow-sm hover:opacity-80 transition-opacity">
+                <img src="./assets/icon1.png" alt="하늘향 로고" class="h-full w-full object-contain p-1">
+            </a>
+            <span class="headline-font font-bold text-xl text-primary tracking-wider hidden sm:block">하늘향</span>
+        </div>
+        <div class="flex items-center gap-4">
+            <a href="index.html" class="text-sm font-bold text-outline hover:text-primary transition-colors flex items-center gap-1">
+                <span class="material-symbols-outlined text-base">list</span> 목록으로
+            </a>
+            <button class="hidden sm:block bg-primary text-white px-5 py-2 rounded-lg font-bold text-sm tracking-widest hover:opacity-90 transition-opacity">
+                SHOP NOW
+            </button>
+        </div>
+    </nav>
+
+    <main class="flex-1 pt-32 pb-24 px-6 max-w-3xl mx-auto w-full">
+        
+        <div id="loadingIndicator" class="text-center py-20">
+            <span class="material-symbols-outlined text-4xl text-outline-variant animate-pulse mb-4">hourglass_empty</span>
+            <p class="text-outline font-medium">소개글을 불러오는 중입니다...</p>
+        </div>
+
+        <div id="errorState" class="hidden text-center py-20 bg-red-50 rounded-2xl border border-red-100">
+            <span class="material-symbols-outlined text-4xl text-red-400 mb-2">error</span>
+            <h2 class="text-lg font-bold text-red-700 mb-1">페이지를 찾을 수 없습니다</h2>
+            <p class="text-sm text-red-600 mb-6">존재하지 않거나 삭제된 소개글입니다.</p>
+            <a href="index.html" class="inline-flex items-center gap-1 text-sm font-bold bg-white text-on-background px-4 py-2 rounded-lg border shadow-sm hover:bg-gray-50">
+                <span class="material-symbols-outlined text-sm">arrow_back</span> 홈으로 돌아가기
+            </a>
+        </div>
+
+        <article id="postArticle" class="hidden">
+            <header class="mb-10 text-center">
+                <div class="inline-flex items-center gap-2 mb-4">
+                    <span class="text-xs font-bold text-outline uppercase tracking-widest">STORY & USAGE</span>
+                    <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+                    <time id="postDate" class="text-xs font-bold text-primary"></time>
+                </div>
+                <h1 id="postTitle" class="headline-font text-3xl md:text-4xl lg:text-5xl font-bold text-primary leading-tight mb-8">
+                    </h1>
+                <div class="w-16 h-0.5 bg-primary/20 mx-auto"></div>
+            </header>
+
+            <div class="bg-surface p-6 sm:p-10 rounded-2xl border border-outline-variant/30 shadow-sm">
+                <div id="postContent"></div>
+            </div>
+            
+            <div class="mt-16 text-center border-t border-outline-variant/30 pt-10">
+                <p class="text-on-surface-variant font-medium mb-6">하늘향의 정성이 담긴 제품을 지금 만나보세요.</p>
+                <button class="bg-primary text-white px-8 py-4 rounded-xl font-bold tracking-widest hover:opacity-90 active:scale-95 transition-all shadow-lg shadow-primary/20">
+                    제품 구매하러 가기
+                </button>
+            </div>
+        </article>
+
+    </main>
+
+    <footer class="w-full py-12 px-6 flex flex-col md:flex-row justify-between items-center gap-6 bg-surface border-t border-outline-variant/30 mt-auto">
+        <div class="flex items-center gap-4">
+            <img src="./assets/icon1.png" alt="하늘향 로고" class="w-12 h-12 object-contain grayscale opacity-70">
+            <p class="text-sm text-on-surface-variant font-medium">© 2026 하늘향. ALL RIGHTS RESERVED.</p>
+        </div>
+    </footer>
+
+    <script>
+        const SUPABASE_URL = "https://eyoahkbqfxcisvmkvikp.supabase.co";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV5b2Foa2JxZnhjaXN2bWt2aWtwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk0NDAzODUsImV4cCI6MjA5NTAxNjM4NX0.-JgH5ACzfq-d96VXEZlXovXx0w_uR3gJiwonaushah8";
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        async function loadPostDetail() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const postId = urlParams.get('id');
+
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const errorState = document.getElementById('errorState');
+            const postArticle = document.getElementById('postArticle');
+
+            if (!postId) {
+                loadingIndicator.classList.add('hidden');
+                errorState.classList.remove('hidden');
+                return;
+            }
+
+            try {
+                const { data: post, error } = await supabaseClient
+                    .from('posts')
+                    .select('*')
+                    .eq('id', postId)
+                    .eq('status', 'published')
+                    .single();
+
+                loadingIndicator.classList.add('hidden');
+
+                if (error || !post) {
+                    errorState.classList.remove('hidden');
+                    return;
+                }
+
+                // 1. 제목 및 날짜 바인딩
+                document.getElementById('postTitle').innerText = post.title;
+                const dateOpts = { year: 'numeric', month: 'long', day: 'numeric' };
+                document.getElementById('postDate').innerText = new Date(post.created_at).toLocaleDateString('ko-KR', dateOpts);
+                
+                // 2. 💡 [해결 부분] 성장 과정과 활용법을 결합하여 HTML 삽입
+                const growthContent = post.content_growth || '<p class="text-outline text-sm">등록된 성장 과정 기록이 없습니다.</p>';
+                const usageContent = post.content_usage || '<p class="text-outline text-sm">등록된 활용법 기록이 없습니다.</p>';
+
+                document.getElementById('postContent').innerHTML = `
+                    <div class="mb-12">
+                        <h2 class="text-2xl font-bold text-primary mb-6 flex items-center gap-2 border-b border-outline-variant/30 pb-3">
+                            <span class="material-symbols-outlined text-green-700">potted_plant</span> 씨앗에서 식탁까지
+                        </h2>
+                        <div class="post-body">${growthContent}</div>
+                    </div>
+                    
+                    <div class="mt-12 pt-12 border-t border-dashed border-outline-variant/50">
+                        <h2 class="text-2xl font-bold text-primary mb-6 flex items-center gap-2 border-b border-outline-variant/30 pb-3">
+                            <span class="material-symbols-outlined text-amber-700">local_cafe</span> 하늘향 제품 100% 활용법
+                        </h2>
+                        <div class="post-body">${usageContent}</div>
+                    </div>
+                `;
+                
+                document.title = `하늘향 - ${post.title}`;
+                postArticle.classList.remove('hidden');
+
+            } catch (error) {
+                loadingIndicator.classList.add('hidden');
+                errorState.classList.remove('hidden');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadPostDetail);
+    </script>
+</body>
+</html>

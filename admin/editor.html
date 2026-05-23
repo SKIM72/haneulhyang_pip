@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>하늘향 - 블로그형 템플릿 글쓰기</title>
+    
+    <link rel="icon" type="image/png" href="../assets/favicon.png">
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script id="tailwind-config">
+        tailwind.config = {
+            theme: { extend: { colors: { "primary": "#17341c", "background": "#fcf9f8", "surface": "#ffffff", "outline": "#737971", "outline-variant": "#c2c8bf" } } }
+        }
+    </script>
+    <style>
+        body { font-family: 'Hanken Grotesk', sans-serif; }
+        .ambient-shadow { box-shadow: 0 12px 32px rgba(27, 61, 47, 0.05); }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        
+        /* 에디터 스타일 정돈 */
+        .ql-container.ql-snow { border: 1px solid #c2c8bf !important; border-top: none !important; border-radius: 0 0 12px 12px; font-size: 16px; min-height: 280px; }
+        .ql-toolbar.ql-snow { border: 1px solid #c2c8bf !important; border-radius: 12px 12px 0 0; background-color: #fcf9f8; padding: 10px; }
+        .ql-editor img { border-radius: 8px; max-width: 100%; margin: 12px 0; }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col">
+
+    <header class="bg-surface border-b border-outline-variant/30 sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <button onclick="history.back()" class="text-outline hover:text-primary transition-colors flex items-center mt-1"><span class="material-symbols-outlined text-2xl">arrow_back</span></button>
+                <span class="font-bold text-primary tracking-wider text-lg">하늘향 세트 글쓰기</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <button onclick="savePost('draft')" id="btnDraft" class="px-4 py-2 text-sm font-medium border border-outline-variant text-primary rounded-xl hover:bg-gray-50 transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-base">save</span>임시저장</button>
+                <button onclick="savePost('published')" id="btnPublish" class="bg-primary text-white px-5 py-2 rounded-xl text-sm font-medium tracking-wide hover:opacity-90 active:scale-95 transition-all flex items-center gap-1 ambient-shadow"><span class="material-symbols-outlined text-base">public</span>발행하기</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-4xl mx-auto w-full px-4 py-8 space-y-8">
+        <div class="bg-surface rounded-2xl border border-outline-variant/30 ambient-shadow p-6 sm:p-10 space-y-6">
+            
+            <div>
+                <label class="block text-xs font-bold text-primary uppercase tracking-wider mb-2">제품 및 포스트 대제목</label>
+                <input type="text" id="postTitle" placeholder="예시: 무농약으로 직접 키워 구수한 작두콩차" 
+                       class="w-full text-xl font-bold text-primary placeholder-outline-variant border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary focus:border-primary px-4 py-3 bg-transparent">
+            </div>
+
+            <div>
+                <label class="flex items-center gap-1 text-xs font-bold text-primary uppercase tracking-wider mb-2">
+                    <span class="material-symbols-outlined text-base text-green-600">potted_plant</span> 🌱 1단계: 성장 과정 기록 (씨앗부터 수확까지)
+                </label>
+                <div id="editorGrowth"></div>
+            </div>
+
+            <div>
+                <label class="flex items-center gap-1 text-xs font-bold text-primary uppercase tracking-wider mb-2">
+                    <span class="material-symbols-outlined text-base text-amber-700">local_cafe</span> ☕ 2단계: 제품 특징 및 100% 활용법 안내
+                </label>
+                <div id="editorUsage"></div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        const SUPABASE_URL = "https://eyoahkbqfxcisvmkvikp.supabase.co";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV5b2Foa2JxZnhjaXN2bWt2aWtwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk0NDAzODUsImV4cCI6MjA5NTAxNjM4NX0.-JgH5ACzfq-d96VXEZlXovXx0w_uR3gJiwonaushah8";
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let postId = null;
+
+        // 공통 툴바 설정
+        const toolbarOptions = [
+            [{ 'header': [1, 2, false] }],
+            ['bold', 'italic', 'underline'],
+            [{ 'color': [] }],
+            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+            ['image', 'link'],
+            ['clean']
+        ];
+
+        // 에디터 1, 2 독립 초기화
+        const quillGrowth = new Quill('#editorGrowth', { theme: 'snow', placeholder: '작물이 자라난 과정이나 농장 이야기를 적어주세요.', modules: { toolbar: { container: toolbarOptions, handlers: { image: () => imgHandler(quillGrowth) } } } });
+        const quillUsage = new Quill('#editorUsage', { theme: 'snow', placeholder: '이 제품을 맛있게 먹는 법이나 활용 팁을 적어주세요.', modules: { toolbar: { container: toolbarOptions, handlers: { image: () => imgHandler(quillUsage) } } } });
+
+        async function checkAuth() {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (!session) window.location.href = 'login.html';
+        }
+
+        // 이미지 핸들러
+        function imgHandler(quillInstance) {
+            const input = document.createElement('input');
+            input.setAttribute('type', 'file');
+            input.setAttribute('accept', 'image/*');
+            input.click();
+
+            input.onchange = async () => {
+                const file = input.files[0];
+                if (!file) return;
+
+                const range = quillInstance.getSelection(true);
+                quillInstance.insertText(range.index, '이미지 업로드 중...', 'color', '#737971');
+
+                const fileExt = file.name.split('.').pop();
+                const fileName = `${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
+                const filePath = `post_images/${fileName}`;
+
+                try {
+                    const { error: uploadError } = await supabaseClient.storage.from('images').upload(filePath, file);
+                    if (uploadError) throw uploadError;
+
+                    const { data } = supabaseClient.storage.from('images').getPublicUrl(filePath);
+                    
+                    quillInstance.deleteText(range.index, 11);
+                    quillInstance.insertEmbed(range.index, 'image', data.publicUrl);
+                    quillInstance.setSelection(range.index + 1);
+                } catch (error) {
+                    quillInstance.deleteText(range.index, 11);
+                    alert('업로드 실패: ' + error.message);
+                }
+            };
+        }
+
+        async function loadPostData() {
+            const urlParams = new URLSearchParams(window.location.search);
+            postId = urlParams.get('id');
+
+            if (postId) {
+                const { data: post, error } = await supabaseClient.from('posts').select('*').eq('id', postId).single();
+                if (post && !error) {
+                    document.getElementById('postTitle').value = post.title;
+                    quillGrowth.root.innerHTML = post.content_growth || '';
+                    quillUsage.root.innerHTML = post.content_usage || '';
+                }
+            }
+        }
+
+        window.savePost = async function(status) {
+            const title = document.getElementById('postTitle').value.trim();
+            const growthHtml = quillGrowth.root.innerHTML;
+            const usageHtml = quillUsage.root.innerHTML;
+
+            if (!title) { return alert('제목을 입력해 주세요.'); }
+
+            const btnPublish = document.getElementById('btnPublish');
+            const btnDraft = document.getElementById('btnDraft');
+            btnPublish.disabled = true; btnDraft.disabled = true;
+
+            // 전체 본문 중 첫 번째 이미지를 찾아 대표 썸네일로 지정
+            let thumbnailUrl = null;
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = growthHtml + usageHtml;
+            const firstImg = tempDiv.querySelector('img');
+            if (firstImg) thumbnailUrl = firstImg.src;
+
+            const postData = {
+                title: title,
+                content_growth: growthHtml,
+                content_usage: usageHtml,
+                status: status,
+                thumbnail_url: thumbnailUrl
+            };
+
+            try {
+                if (postId) {
+                    await supabaseClient.from('posts').update(postData).eq('id', postId);
+                } else {
+                    await supabaseClient.from('posts').insert([postData]);
+                }
+                alert(status === 'published' ? '홈페이지에 정상 발행되었습니다.' : '임시저장 되었습니다.');
+                window.location.href = 'dashboard.html';
+            } catch (error) {
+                alert('저장 실패: ' + error.message);
+                btnPublish.disabled = false; btnDraft.disabled = false;
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await checkAuth();
+            loadPostData();
+        });
+    </script>
+</body>
+</html>
