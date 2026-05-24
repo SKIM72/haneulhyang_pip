@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
     <script id="tailwind-config">
         tailwind.config = {
@@ -116,7 +116,7 @@
                 <button onclick="closeQrModal()" class="text-outline hover:text-on-background transition-colors"><span class="material-symbols-outlined">close</span></button>
             </div>
             <div class="p-8 flex flex-col items-center justify-center bg-white rounded-b-2xl">
-                <canvas id="qrCanvas" class="mb-5 border border-outline-variant/20 rounded-xl p-2 shadow-sm"></canvas>
+                <div id="qrCodeContainer" class="mb-5 border border-outline-variant/20 rounded-xl p-2 shadow-sm bg-white min-h-[220px] min-w-[220px] flex items-center justify-center"></div>
                 <p id="qrPostTitle" class="text-sm font-bold text-primary mb-1 text-center w-full truncate px-4"></p>
                 <p class="text-xs text-outline mb-6 text-center">이 QR 코드를 스캔하면 해당 제품의<br>상세 소개 페이지로 즉시 이동합니다.</p>
                 <button id="btnDownloadQr" class="w-full bg-primary text-white py-3 rounded-xl font-medium text-sm tracking-wider hover:opacity-90 active:scale-95 transition-all flex items-center justify-center gap-2 ambient-shadow">
@@ -260,7 +260,9 @@
                     : `<span class="px-2.5 py-1 bg-gray-100 text-gray-700 text-xs font-bold rounded-md">임시저장</span>`;
                 
                 const date = new Date(post.created_at).toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' });
-                const escapedTitle = (post.title || '제목 없음').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                
+                // 💡 수정: HTML 속성 충돌을 완벽 방지하기 위해 큰따옴표만 안전하게 이스케이프 처리
+                const escapedTitle = (post.title || '제목 없음').replace(/"/g, '&quot;');
 
                 const li = document.createElement('li');
                 li.className = "p-5 sm:p-6 hover:bg-gray-50 transition-colors flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between";
@@ -270,7 +272,7 @@
                         <h2 class="text-lg font-semibold text-primary truncate max-w-xl">${post.title || '제목 없음'}</h2>
                     </div>
                     <div class="flex items-center gap-2 w-full sm:w-auto">
-                        <button onclick="openQrModal('${post.id}', '${escapedTitle}')" class="flex-1 sm:flex-none px-4 py-2 text-sm font-medium border border-primary/20 text-primary bg-primary/5 rounded-lg hover:bg-primary/10 transition-colors">QR 생성</button>
+                        <button onclick="openQrModal('${post.id}', this)" data-title="${escapedTitle}" class="flex-1 sm:flex-none px-4 py-2 text-sm font-medium border border-primary/20 text-primary bg-primary/5 rounded-lg hover:bg-primary/10 transition-colors">QR 생성</button>
                         <button onclick="editPost('${post.id}')" class="flex-1 sm:flex-none px-4 py-2 text-sm font-medium border border-outline-variant text-primary rounded-lg hover:bg-white transition-colors">수정</button>
                         <button onclick="deletePost('${post.id}')" class="flex-1 sm:flex-none px-4 py-2 text-sm font-medium border border-red-200 text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors">삭제</button>
                     </div>
@@ -279,36 +281,44 @@
             });
         }
 
-        // 💡 추가: QR 모달 관련 함수 (도메인 대응 로직 포함)
-        window.openQrModal = function(postId, postTitle) {
+        // 💡 수정: 안정적인 QR 로직 및 파일명 오류 방지 로직 적용
+        window.openQrModal = function(postId, btnElement) {
+            // 버튼 요소에 저장해둔 안전한 제목 데이터를 꺼내옵니다.
+            const postTitle = btnElement.getAttribute('data-title');
+            
             document.getElementById('qrModal').classList.remove('hidden');
             document.getElementById('qrPostTitle').innerText = postTitle;
 
-            // 관리자 경로(/admin/dashboard.html)를 감안하여 상위 경로의 detail.html 주소 자동 탐색 (도메인 변경 대응)
             const postUrl = new URL(`../detail.html?id=${postId}`, window.location.href).href;
-
-            const canvas = document.getElementById('qrCanvas');
+            const container = document.getElementById('qrCodeContainer');
             
-            // 기존 캔버스 내용 초기화 및 QR 드로잉
-            QRCode.toCanvas(canvas, postUrl, {
+            // 기존 QR 삭제
+            container.innerHTML = '';
+            
+            // 새로운 QR 생성
+            new QRCode(container, {
+                text: postUrl,
                 width: 220,
-                margin: 2,
-                color: {
-                    dark: '#17341c', // 하늘향 브랜드 컬러
-                    light: '#ffffff'
-                }
-            }, function (error) {
-                if (error) console.error(error);
+                height: 220,
+                colorDark : "#17341c",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
             });
 
-            // 다운로드 버튼 이벤트 바인딩
+            // 다운로드 로직
             document.getElementById('btnDownloadQr').onclick = function() {
-                const imgData = canvas.toDataURL("image/png");
-                const link = document.createElement('a');
-                // 저장될 파일 이름 설정
-                link.download = `하늘향_QR_${postTitle.substring(0, 10)}.png`;
-                link.href = imgData;
-                link.click();
+                const canvas = container.querySelector('canvas');
+                if (canvas) {
+                    const imgData = canvas.toDataURL("image/png");
+                    const link = document.createElement('a');
+                    
+                    // 💡 수정: 컴퓨터 파일명으로 금지된 특수문자 제거(언더스코어 처리)하여 OS 저장 거부 완벽 차단
+                    const safeTitle = postTitle.replace(/[^a-zA-Z0-9가-힣]/g, '_').substring(0, 15);
+                    
+                    link.download = `하늘향_QR_${safeTitle}.png`;
+                    link.href = imgData;
+                    link.click();
+                }
             };
         };
 
