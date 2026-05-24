@@ -9,6 +9,9 @@
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script id="tailwind-config">
@@ -54,6 +57,9 @@
         .ambient-shadow { box-shadow: 0 24px 48px rgba(27, 61, 47, 0.08); }
         .reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.5, 0, 0, 1); }
         .reveal.active { opacity: 1; transform: translateY(0); }
+        
+        /* 포스트 제목용 세리프체 클래스 */
+        .korean-serif { font-family: 'EB Garamond', 'Noto Serif KR', serif !important; }
     </style>
 </head>
 <body class="bg-background text-on-background font-body-md antialiased overflow-x-hidden min-h-screen flex flex-col">
@@ -169,7 +175,6 @@
 
                 let filteredPosts = posts || [];
 
-                // JS Date filtering to perfectly match user's local timezone picking
                 if (searchDate) {
                     filteredPosts = filteredPosts.filter(post => {
                         const dateObj = new Date(post.created_at);
@@ -220,7 +225,7 @@
                                     <span class="font-bold text-sm text-primary">하늘향</span>
                                     <span class="text-xs text-outline font-medium">${dateStr}</span>
                                 </div>
-                                <h3 class="font-headline-md text-2xl md:text-3xl font-bold text-primary mb-3 group-hover:text-surface-tint transition-colors">${post.title}</h3>
+                                <h3 class="korean-serif text-2xl md:text-3xl font-medium text-primary mb-3 group-hover:text-surface-tint transition-colors">${post.title}</h3>
                                 <p class="font-body-md text-base text-on-surface-variant line-clamp-3 leading-relaxed">${plainText}</p>
                             </div>
                             <div class="w-full md:w-[220px] lg:w-[260px] aspect-[4/3] shrink-0 rounded-xl overflow-hidden bg-surface-variant">

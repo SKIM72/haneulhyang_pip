@@ -9,6 +9,9 @@
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script id="tailwind-config">
@@ -54,6 +57,9 @@
         .ambient-shadow { box-shadow: 0 24px 48px rgba(27, 61, 47, 0.08); }
         .reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.5, 0, 0, 1); }
         .reveal.active { opacity: 1; transform: translateY(0); }
+        
+        /* 포스트 제목용 세리프체 클래스 */
+        .korean-serif { font-family: 'EB Garamond', 'Noto Serif KR', serif !important; }
     </style>
 </head>
 <body class="bg-background text-on-background font-body-md antialiased overflow-x-hidden">
@@ -99,7 +105,35 @@
                 <div class="w-12 h-0.5 bg-primary/20 mx-auto mt-4"></div>
             </div>
 
-            <div id="storyLoading" class="text-center py-12 text-on-surface-variant">농장의 수확 일지를 불러오는 중입니다...</div>
+            <div id="storyLoading" class="w-full flex flex-col gap-8">
+                <div class="flex flex-col-reverse md:flex-row gap-6 md:gap-8 py-8 border-b border-outline-variant/30 animate-pulse">
+                    <div class="flex-1 flex flex-col justify-center">
+                        <div class="flex items-center gap-2.5 mb-4">
+                            <div class="w-8 h-8 rounded-full bg-surface-variant shrink-0"></div>
+                            <div class="h-3 w-16 bg-surface-variant rounded"></div>
+                            <div class="h-3 w-24 bg-surface-variant rounded"></div>
+                        </div>
+                        <div class="h-8 w-3/4 bg-surface-variant rounded-lg mb-4"></div>
+                        <div class="h-4 w-full bg-surface-variant rounded mb-2"></div>
+                        <div class="h-4 w-5/6 bg-surface-variant rounded mb-2"></div>
+                        <div class="h-4 w-2/3 bg-surface-variant rounded"></div>
+                    </div>
+                    <div class="w-full md:w-[220px] lg:w-[260px] aspect-[4/3] shrink-0 rounded-xl bg-surface-variant"></div>
+                </div>
+                <div class="hidden md:flex flex-col-reverse md:flex-row gap-6 md:gap-8 py-8 border-b border-outline-variant/30 animate-pulse opacity-50">
+                    <div class="flex-1 flex flex-col justify-center">
+                        <div class="flex items-center gap-2.5 mb-4">
+                            <div class="w-8 h-8 rounded-full bg-surface-variant shrink-0"></div>
+                            <div class="h-3 w-16 bg-surface-variant rounded"></div>
+                            <div class="h-3 w-24 bg-surface-variant rounded"></div>
+                        </div>
+                        <div class="h-8 w-2/3 bg-surface-variant rounded-lg mb-4"></div>
+                        <div class="h-4 w-full bg-surface-variant rounded mb-2"></div>
+                        <div class="h-4 w-4/5 bg-surface-variant rounded"></div>
+                    </div>
+                    <div class="w-full md:w-[220px] lg:w-[260px] aspect-[4/3] shrink-0 rounded-xl bg-surface-variant"></div>
+                </div>
+            </div>
             
             <div id="blogListContainer" class="flex flex-col gap-8 hidden"></div>
             
@@ -135,31 +169,48 @@
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         function initScrollReveal() {
-            setTimeout(() => {
-                const reveals = document.querySelectorAll(".reveal");
-                const observer = new IntersectionObserver((entries) => {
-                    entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('active'); });
-                }, { threshold: 0.1 });
-                reveals.forEach(el => observer.observe(el));
-            }, 100);
+            const reveals = document.querySelectorAll(".reveal:not(.active)");
+            if (reveals.length === 0) return;
+
+            const observer = new IntersectionObserver((entries, obs) => {
+                entries.forEach(entry => { 
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        obs.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.05, rootMargin: "50px" });
+
+            reveals.forEach(el => observer.observe(el));
         }
 
         async function loadMainContents() {
+            const loadingIndicator = document.getElementById('storyLoading');
+            const listContainer = document.getElementById('blogListContainer');
+            const emptyEl = document.getElementById('storyEmpty');
+            const moreBtn = document.getElementById('moreBtnContainer');
+
             try {
-                // limit(3)를 추가하여 최대 3개만 호출
-                const { data: posts, error } = await supabaseClient.from('posts').select('*').eq('status', 'published').order('created_at', { ascending: false }).limit(3);
+                const { data: posts, error } = await supabaseClient
+                    .from('posts')
+                    .select('*')
+                    .eq('status', 'published')
+                    .order('created_at', { ascending: false })
+                    .limit(3);
+                    
                 if (error) throw error;
 
-                document.getElementById('storyLoading').classList.add('hidden');
+                loadingIndicator.classList.add('hidden');
                 
                 if (!posts || posts.length === 0) { 
-                    document.getElementById('storyEmpty').classList.remove('hidden'); 
+                    emptyEl.classList.remove('hidden'); 
+                    listContainer.classList.add('hidden');
+                    moreBtn.classList.add('hidden');
                     return; 
                 }
 
-                const listContainer = document.getElementById('blogListContainer');
                 listContainer.classList.remove('hidden');
-                document.getElementById('moreBtnContainer').classList.remove('hidden'); // 게시글이 있을 때만 더보기 버튼 노출
+                moreBtn.classList.remove('hidden'); 
                 listContainer.innerHTML = '';
 
                 posts.forEach(post => {
@@ -192,7 +243,7 @@
                                     <span class="font-bold text-sm text-primary">하늘향</span>
                                     <span class="text-xs text-outline font-medium">${dateStr}</span>
                                 </div>
-                                <h3 class="font-headline-md text-2xl md:text-3xl font-bold text-primary mb-3 group-hover:text-surface-tint transition-colors">${post.title}</h3>
+                                <h3 class="korean-serif text-2xl md:text-3xl font-medium text-primary mb-3 group-hover:text-surface-tint transition-colors">${post.title}</h3>
                                 <p class="font-body-md text-base text-on-surface-variant line-clamp-3 leading-relaxed">${plainText}</p>
                             </div>
                             <div class="w-full md:w-[220px] lg:w-[260px] aspect-[4/3] shrink-0 rounded-xl overflow-hidden bg-surface-variant">
@@ -202,9 +253,26 @@
                     `;
                     listContainer.innerHTML += postHTML;
                 });
-            } catch (error) { console.error(error); } finally { initScrollReveal(); }
+            } catch (error) { 
+                console.error(error); 
+            } finally { 
+                requestAnimationFrame(() => {
+                    setTimeout(() => {
+                        initScrollReveal();
+                    }, 50);
+                });
+            }
         }
+        
         document.addEventListener('DOMContentLoaded', loadMainContents);
+
+        window.addEventListener('pageshow', (event) => {
+            if (event.persisted) {
+                requestAnimationFrame(() => {
+                    initScrollReveal();
+                });
+            }
+        });
     </script>
 </body>
 </html>
