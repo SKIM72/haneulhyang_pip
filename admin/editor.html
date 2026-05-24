@@ -195,7 +195,10 @@
                         <div class="aspect-video bg-gray-100 rounded-lg border border-dashed border-gray-300 flex items-center justify-center overflow-hidden relative">
                             ${use.img ? `<img src="${use.img}" class="w-full h-full object-cover">` : `<span class="text-sm text-gray-400">사진 등록</span>`}
                         </div>
-                        <button onclick="uploadImage('usage', ${index})" class="text-xs bg-amber-100 text-amber-800 py-1.5 rounded font-bold hover:bg-amber-200">카드 사진 업로드</button>
+                        <div class="flex gap-2 w-full">
+                            <button onclick="uploadImage('usage', ${index})" class="flex-1 text-xs bg-amber-100 text-amber-800 py-1.5 rounded font-bold hover:bg-amber-200 transition-colors">카드 사진 업로드</button>
+                            ${use.img ? `<button onclick="removeUsageImage(${index})" class="text-xs border border-outline-variant/50 text-outline py-1.5 px-3 rounded font-bold hover:bg-red-50 hover:text-red-500 hover:border-red-200 transition-colors">사진 삭제</button>` : ''}
+                        </div>
                         <input type="text" value="${use.title}" onchange="updateData('usage', ${index}, 'title', this.value)" placeholder="예: 따뜻한 차로" class="w-full border-b border-outline-variant/30 focus:border-primary bg-transparent py-1 text-primary font-bold text-sm">
                         <textarea onchange="updateData('usage', ${index}, 'desc', this.value)" placeholder="예: 뜨거운 물 1L에 2조각을 넣고..." class="w-full flex-1 border border-outline-variant/30 rounded-lg p-2 text-sm resize-none focus:ring-1 focus:ring-primary h-20">${use.desc}</textarea>
                     </div>
@@ -205,6 +208,7 @@
         }
         window.addUsage = function() { usageSteps.push({ img: '', title: '', desc: '' }); renderUsage(); }
         window.removeUsage = function(index) { usageSteps.splice(index, 1); renderUsage(); }
+        window.removeUsageImage = function(index) { usageSteps[index].img = ''; renderUsage(); }
 
         window.updateData = function(type, index, field, value) {
             if(type === 'growth') {
