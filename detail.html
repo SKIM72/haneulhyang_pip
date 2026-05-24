@@ -57,7 +57,6 @@
         .reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.5, 0, 0, 1); }
         .reveal.active { opacity: 1; transform: translateY(0); }
         
-        /* 과거 버전 호환을 위한 클래스 유지 */
         .post-body { color: #2c2c2c; font-size: 0.95rem; line-height: 1.6; font-family: 'Hanken Grotesk', sans-serif; }
         .post-body p { margin-bottom: 1rem; }
         .post-body img { border-radius: 0.75rem; margin: 1.25rem auto; box-shadow: 0 10px 30px rgba(0,0,0,0.05); max-width: 90%; }
@@ -85,8 +84,12 @@
             </div>
             
             <div class="flex justify-end items-center z-10">
-                <button class="font-label-lg text-label-lg tracking-widest text-primary hover:opacity-80 transition-opacity">SHOP NOW</button>
+                <a href="https://www.band.us/band/67603330" target="_blank" rel="noopener noreferrer" class="group block w-9 h-9 md:w-11 md:h-11 transition-transform duration-300 hover:scale-110" title="하늘향 밴드 바로가기">
+                    <img src="./assets/band.png" alt="네이버 밴드" class="w-full h-full object-contain block group-hover:hidden">
+                    <img src="./assets/band_hover.png" alt="네이버 밴드" class="w-full h-full object-contain hidden group-hover:block">
+                </a>
             </div>
+            
         </div>
     </nav>
 
@@ -166,7 +169,6 @@
                 document.getElementById('postTitle').innerText = post.title;
                 document.getElementById('postDate').innerText = new Date(post.created_at).toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' });
                 
-                // 1단계: 성장 과정 렌더링
                 const targetRender = document.getElementById('growthDynamicRender');
                 try {
                     const growthData = JSON.parse(post.content_growth);
@@ -212,7 +214,6 @@
                     targetRender.innerHTML = timelineLine + timelineContent;
                 } catch (e) { targetRender.innerHTML = `<div class="post-body bg-surface p-6 rounded-xl">${post.content_growth}</div>`; }
 
-                // 2단계: 활용법 (새로운 카드 그리드 로직)
                 const usageRender = document.getElementById('usageRender');
                 try {
                     const usageData = JSON.parse(post.content_usage);
@@ -237,7 +238,6 @@
                         usageRender.innerHTML = '<p class="text-center text-outline text-sm">등록된 활용법이 없습니다.</p>';
                     }
                 } catch (e) {
-                    // 과거 호환 (JSON 형식이 아닌 일반 HTML 텍스트일 경우)
                     usageRender.className = "relative bg-surface p-6 md:p-8 rounded-[1.5rem] border border-outline-variant/20 ambient-shadow post-body";
                     usageRender.innerHTML = post.content_usage || '<p class="text-center text-outline text-sm">등록된 안내가 없습니다.</p>';
                 }

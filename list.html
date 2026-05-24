@@ -57,8 +57,6 @@
         .ambient-shadow { box-shadow: 0 24px 48px rgba(27, 61, 47, 0.08); }
         .reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.5, 0, 0, 1); }
         .reveal.active { opacity: 1; transform: translateY(0); }
-        
-        /* 포스트 제목용 세리프체 클래스 */
         .korean-serif { font-family: 'EB Garamond', 'Noto Serif KR', serif !important; }
     </style>
 </head>
@@ -73,9 +71,14 @@
                 <span class="headline-font text-base md:text-lg font-bold text-primary tracking-wider">하늘향</span>
             </a>
             <div class="absolute inset-x-0 flex justify-center items-center pointer-events-none"></div>
+            
             <div class="flex justify-end items-center z-10">
-                <button class="font-label-lg text-label-lg tracking-widest text-primary hover:opacity-80 transition-opacity">SHOP NOW</button>
+                <a href="https://www.band.us/band/67603330" target="_blank" rel="noopener noreferrer" class="group block w-9 h-9 md:w-11 md:h-11 transition-transform duration-300 hover:scale-110" title="하늘향 밴드 바로가기">
+                    <img src="./assets/band.png" alt="네이버 밴드" class="w-full h-full object-contain block group-hover:hidden">
+                    <img src="./assets/band_hover.png" alt="네이버 밴드" class="w-full h-full object-contain hidden group-hover:block">
+                </a>
             </div>
+            
         </div>
     </nav>
 

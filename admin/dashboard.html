@@ -29,7 +29,10 @@
         <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
             <div class="flex items-center gap-3">
                 <img src="../assets/icon1.png" alt="하늘향 로고" class="w-10 h-10 object-contain">
-                <span class="font-bold text-primary tracking-wider text-lg hidden sm:block">하늘향 관리자</span>
+                <div class="flex items-center gap-2">
+                    <span class="font-bold text-primary tracking-wider text-lg hidden sm:block">하늘향 관리자</span>
+                    <span class="hidden sm:inline-block px-2 py-0.5 bg-surface-variant text-outline rounded text-[0.65rem] font-bold tracking-wider">v2026.05.25</span>
+                </div>
             </div>
             
             <div class="flex items-center gap-4">
@@ -223,7 +226,7 @@
             postsList.classList.add('hidden');
             emptyState.classList.add('hidden');
 
-            let query = supabaseClient.from('posts').select('*');
+            let query = supabaseClient.from('posts').select('*').neq('status', 'deleted');
             
             if (sortOrder === 'asc') query = query.order('created_at', { ascending: true });
             else query = query.order('created_at', { ascending: false });
@@ -261,7 +264,6 @@
                 
                 const date = new Date(post.created_at).toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' });
                 
-                // 💡 수정: HTML 속성 충돌을 완벽 방지하기 위해 큰따옴표만 안전하게 이스케이프 처리
                 const escapedTitle = (post.title || '제목 없음').replace(/"/g, '&quot;');
 
                 const li = document.createElement('li');
@@ -281,9 +283,7 @@
             });
         }
 
-        // 💡 수정: 안정적인 QR 로직 및 파일명 오류 방지 로직 적용
         window.openQrModal = function(postId, btnElement) {
-            // 버튼 요소에 저장해둔 안전한 제목 데이터를 꺼내옵니다.
             const postTitle = btnElement.getAttribute('data-title');
             
             document.getElementById('qrModal').classList.remove('hidden');
@@ -292,10 +292,8 @@
             const postUrl = new URL(`../detail.html?id=${postId}`, window.location.href).href;
             const container = document.getElementById('qrCodeContainer');
             
-            // 기존 QR 삭제
             container.innerHTML = '';
             
-            // 새로운 QR 생성
             new QRCode(container, {
                 text: postUrl,
                 width: 220,
@@ -305,14 +303,12 @@
                 correctLevel : QRCode.CorrectLevel.H
             });
 
-            // 다운로드 로직
             document.getElementById('btnDownloadQr').onclick = function() {
                 const canvas = container.querySelector('canvas');
                 if (canvas) {
                     const imgData = canvas.toDataURL("image/png");
                     const link = document.createElement('a');
                     
-                    // 💡 수정: 컴퓨터 파일명으로 금지된 특수문자 제거(언더스코어 처리)하여 OS 저장 거부 완벽 차단
                     const safeTitle = postTitle.replace(/[^a-zA-Z0-9가-힣]/g, '_').substring(0, 15);
                     
                     link.download = `하늘향_QR_${safeTitle}.png`;
@@ -334,9 +330,14 @@
         window.editPost = function(id) { window.location.href = `editor.html?id=${id}`; };
 
         window.deletePost = async function(id) {
-            if (confirm('정말 이 소개글을 삭제하시겠습니까?\n삭제된 글은 복구할 수 없습니다.')) {
-                await supabaseClient.from('posts').delete().eq('id', id);
-                loadPosts(); 
+            if (confirm('정말 이 소개글을 삭제하시겠습니까?\n(삭제된 게시글은 프론트에서 숨김 처리되며 1달 뒤 자동 영구 삭제됩니다.)')) {
+                // 💡 수정됨: 데이터베이스에서 에러 발생 시 경고창(Alert)을 띄우도록 에러 처리 로직 추가
+                const { error } = await supabaseClient.from('posts').update({ status: 'deleted' }).eq('id', id);
+                if (error) {
+                    alert('데이터베이스 업데이트 실패! Supabase 테이블의 status 컬럼 설정에서 "deleted"를 허용해주세요.\n에러 원인: ' + error.message);
+                } else {
+                    loadPosts(); 
+                }
             }
         };
 
