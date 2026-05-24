@@ -51,44 +51,42 @@
         }
     </script>
     <style>
+        .headline-font { font-family: 'EB Garamond', serif; }
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
         .ambient-shadow { box-shadow: 0 24px 48px rgba(27, 61, 47, 0.08); }
         .reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.5, 0, 0, 1); }
         .reveal.active { opacity: 1; transform: translateY(0); }
-        .post-body { color: #2c2c2c; font-size: 1.125rem; line-height: 1.9; font-family: 'Hanken Grotesk', sans-serif; }
-        .post-body p { margin-bottom: 1.5rem; }
-        .post-body img { border-radius: 1rem; margin: 2rem auto; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-        .post-body h1, .post-body h2 { font-family: 'EB Garamond', 'Noto Serif KR', serif; color: #17341c; margin-top: 2.5rem; margin-bottom: 1.25rem; }
-        .post-body h1 { font-size: 2rem; font-weight: bold; }
-        .post-body h2 { font-size: 1.5rem; font-weight: bold; }
-        .post-body ul { list-style: disc; padding-left: 1.5rem; margin-bottom: 1.5rem; }
-        .post-body ol { list-style: decimal; padding-left: 1.5rem; margin-bottom: 1.5rem; }
+        
+        /* 과거 버전 호환을 위한 클래스 유지 */
+        .post-body { color: #2c2c2c; font-size: 0.95rem; line-height: 1.6; font-family: 'Hanken Grotesk', sans-serif; }
+        .post-body p { margin-bottom: 1rem; }
+        .post-body img { border-radius: 0.75rem; margin: 1.25rem auto; box-shadow: 0 10px 30px rgba(0,0,0,0.05); max-width: 90%; }
+        .post-body h1, .post-body h2 { font-family: 'EB Garamond', 'Noto Serif KR', serif; color: #17341c; margin-top: 1.5rem; margin-bottom: 0.75rem; }
+        .post-body h1 { font-size: 1.25rem; font-weight: bold; }
+        .post-body h2 { font-size: 1.1rem; font-weight: bold; }
+        .post-body ul { list-style: disc; padding-left: 1.5rem; margin-bottom: 1.25rem; }
+        .post-body ol { list-style: decimal; padding-left: 1.5rem; margin-bottom: 1.25rem; }
         .korean-serif { font-family: 'EB Garamond', 'Noto Serif KR', serif !important; }
     </style>
 </head>
 <body class="bg-background text-on-background font-body-md antialiased overflow-x-hidden flex flex-col min-h-screen">
 
     <nav class="fixed top-0 inset-x-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-outline-variant/30">
-        <div class="flex justify-center md:justify-between items-center px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto w-full">
-            
-            <button class="md:hidden text-primary p-2 absolute right-margin-mobile">
-                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">menu</span>
-            </button>
-            
-            <ul class="hidden md:flex gap-8 items-center flex-1">
-                <li><a class="font-label-lg text-label-lg tracking-widest text-primary border-b-2 border-primary pb-1" href="index.html">STORY</a></li>
-                <li><a class="font-label-lg text-label-lg tracking-widest text-on-surface-variant hover:text-primary transition-colors" href="#">USAGE</a></li>
-                <li><a class="font-label-lg text-label-lg tracking-widest text-on-surface-variant hover:text-primary transition-colors" href="#">BRAND</a></li>
-            </ul>
-            
-            <a class="block h-16 w-16 md:h-20 md:w-20 rounded-2xl overflow-hidden bg-white shadow-sm border border-outline-variant/20" href="index.html">
-                <img alt="하늘향 로고" class="h-full w-full object-cover p-1" src="./assets/icon1.png"/>
+        <div class="relative flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto w-full">
+            <a class="flex items-center gap-3 z-10 hover:opacity-90 transition-opacity" href="index.html">
+                <div class="h-12 w-12 md:h-14 md:w-14 rounded-2xl overflow-hidden bg-white shadow-sm border border-outline-variant/20 shrink-0">
+                    <img alt="하늘향 로고" class="h-full w-full object-cover p-1" src="./assets/icon1.png"/>
+                </div>
+                <span class="headline-font text-base md:text-lg font-bold text-primary tracking-wider">하늘향</span>
             </a>
             
-            <div class="hidden md:flex flex-1 justify-end">
-                <button class="font-label-lg text-label-lg tracking-widest text-primary hover:opacity-80 transition-opacity">SHOP NOW</button>
+            <div class="absolute inset-x-0 flex justify-center items-center pointer-events-none">
+                <a href="index.html" class="pointer-events-auto font-label-lg text-label-lg tracking-widest text-primary hover:opacity-80 transition-opacity">목록으로</a>
             </div>
             
+            <div class="flex justify-end items-center z-10">
+                <button class="font-label-lg text-label-lg tracking-widest text-primary hover:opacity-80 transition-opacity">SHOP NOW</button>
+            </div>
         </div>
     </nav>
 
@@ -104,43 +102,40 @@
         </div>
 
         <article id="postArticle" class="hidden">
-            <section class="reveal px-margin-mobile md:px-margin-desktop py-16 md:py-24 max-w-container-max mx-auto text-center flex flex-col items-center">
-                <div class="inline-flex items-center justify-center px-4 py-1.5 mb-6 border border-primary/20 rounded-full bg-surface-container-lowest/50">
-                    <span id="postDate" class="font-label-sm text-label-sm text-primary tracking-widest uppercase"></span>
+            <section class="reveal px-margin-mobile md:px-margin-desktop py-12 md:py-16 max-w-container-max mx-auto text-center flex flex-col items-center">
+                <div class="inline-flex items-center justify-center px-4 py-1 mb-4 border border-primary/20 rounded-full bg-surface-container-lowest/50">
+                    <span id="postDate" class="font-label-sm text-xs text-primary tracking-widest uppercase"></span>
                 </div>
-                <h1 id="postTitle" class="korean-serif font-headline-lg-mobile md:font-display-lg text-primary max-w-3xl mx-auto mb-6 leading-tight"></h1>
+                <h1 id="postTitle" class="korean-serif text-2xl md:text-3xl lg:text-4xl text-primary max-w-3xl mx-auto mb-4 leading-tight"></h1>
             </section>
 
-            <section class="px-margin-mobile md:px-margin-desktop pb-24 max-w-container-max mx-auto">
-                <h2 class="reveal korean-serif text-3xl md:text-4xl text-primary mb-12 text-center md:text-left border-b border-outline-variant/30 pb-4">
+            <section class="px-margin-mobile md:px-margin-desktop pb-20 max-w-container-max mx-auto">
+                <h2 class="reveal korean-serif text-xl md:text-2xl text-primary mb-6 text-center md:text-left border-b border-outline-variant/30 pb-3">
                     성장 이야기 (Growth Story)
                 </h2>
                 <div id="growthDynamicRender"></div>
             </section>
             
-            <section class="bg-surface-container-lowest py-24 px-margin-mobile md:px-margin-desktop border-t border-surface-container-low">
+            <section class="bg-surface-container-lowest py-16 md:py-20 px-margin-mobile md:px-margin-desktop border-t border-surface-container-low">
                 <div class="max-w-4xl mx-auto">
-                    <div class="text-center mb-16 reveal">
-                        <span class="font-label-lg text-primary tracking-widest uppercase mb-3 block">Usage Guide</span>
-                        <h2 class="korean-serif text-4xl md:text-5xl text-primary mb-6">하늘향 제품 100% 활용법</h2>
-                        <div class="w-12 h-0.5 bg-primary/30 mx-auto"></div>
+                    <div class="text-center mb-10 reveal">
+                        <span class="text-[10px] font-bold text-primary tracking-widest uppercase mb-1.5 block">Usage Guide</span>
+                        <h2 class="korean-serif text-2xl md:text-3xl text-primary mb-4">하늘향 제품 활용법</h2>
+                        <div class="w-10 h-0.5 bg-primary/30 mx-auto"></div>
                     </div>
                     
-                    <div class="relative bg-surface p-10 md:p-16 rounded-[2rem] border border-outline-variant/20 ambient-shadow reveal">
-                        <div class="absolute top-0 left-10 w-16 h-1.5 bg-primary rounded-b-md"></div>
-                        <div id="usageRender" class="post-body"></div>
-                    </div>
+                    <div id="usageRender" class="reveal"></div>
                 </div>
             </section>
         </article>
     </main>
 
-    <footer class="w-full py-16 px-margin-mobile md:px-margin-desktop flex flex-col items-center text-center gap-8 bg-surface-container-lowest border-t border-surface-container-low mt-auto">
-        <div class="flex flex-col items-center gap-6">
-            <a class="block h-20 w-20 rounded-2xl overflow-hidden bg-white shadow-md border border-outline-variant/20" href="index.html">
+    <footer class="w-full py-12 px-margin-mobile md:px-margin-desktop flex flex-col items-center text-center gap-6 bg-surface-container-lowest border-t border-surface-container-low mt-auto">
+        <div class="flex flex-col items-center gap-4">
+            <a class="block h-14 w-14 rounded-2xl overflow-hidden bg-white shadow-sm border border-outline-variant/20" href="index.html">
                 <img alt="하늘향 로고" class="h-full w-full object-cover p-1" src="./assets/icon1.png"/>
             </a>
-            <span class="font-body-md text-body-md text-secondary">© 2026 하늘향 PREMIUM WELLNESS. ALL RIGHTS RESERVED.</span>
+            <span class="font-body-md text-sm text-secondary">© 2026 하늘향 PREMIUM WELLNESS. ALL RIGHTS RESERVED.</span>
         </div>
     </footer>
 
@@ -171,28 +166,27 @@
                 document.getElementById('postTitle').innerText = post.title;
                 document.getElementById('postDate').innerText = new Date(post.created_at).toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' });
                 
-                document.getElementById('usageRender').innerHTML = post.content_usage || '<p class="text-center text-outline">등록된 안내가 없습니다.</p>';
-
+                // 1단계: 성장 과정 렌더링
                 const targetRender = document.getElementById('growthDynamicRender');
                 try {
                     const growthData = JSON.parse(post.content_growth);
                     const steps = growthData.steps || [];
 
-                    targetRender.className = "flex flex-col gap-16 md:gap-24 relative";
+                    targetRender.className = "flex flex-col gap-8 md:gap-12 relative max-w-4xl mx-auto";
                     const timelineLine = '<div class="hidden md:block absolute left-1/2 top-0 bottom-0 w-[1px] bg-outline-variant/30 transform -translate-x-1/2 z-0"></div>';
                     
                     const timelineContent = steps.map((step, index) => {
                         const isEven = index % 2 === 0;
                         if (isEven) {
                             return `
-                                <div class="reveal flex flex-col md:flex-row items-center gap-8 md:gap-16 relative z-10">
-                                    <div class="w-full md:w-1/2 md:text-right">
-                                        <span class="inline-block px-3 py-1 bg-secondary-container/50 text-on-secondary-container rounded-full font-label-sm text-label-sm mb-3">STEP 0${index + 1}</span>
-                                        <h3 class="korean-serif text-2xl md:text-3xl text-primary mb-2">${step.title || ''}</h3>
-                                        <p class="font-body-md text-body-md text-on-surface-variant">${(step.desc || '').replace(/\n/g, '<br>')}</p>
+                                <div class="reveal flex flex-col md:flex-row items-center gap-6 md:gap-8 relative z-10">
+                                    <div class="w-full md:w-1/2 md:text-right md:pr-4">
+                                        <span class="inline-block px-2.5 py-0.5 bg-secondary-container/50 text-on-secondary-container rounded-full font-label-sm text-[0.7rem] font-bold mb-2 tracking-wider">STEP 0${index + 1}</span>
+                                        <h3 class="korean-serif text-lg md:text-xl text-primary mb-2">${step.title || ''}</h3>
+                                        <p class="font-body-md text-sm md:text-base text-on-surface-variant leading-relaxed">${(step.desc || '').replace(/\n/g, '<br>')}</p>
                                     </div>
                                     <div class="w-full md:w-1/2">
-                                        <div class="aspect-[4/3] rounded-xl overflow-hidden ambient-shadow">
+                                        <div class="aspect-[4/3] rounded-xl overflow-hidden ambient-shadow max-w-[400px] mx-auto md:ml-4 md:mr-auto">
                                             <img alt="${step.title || ''}" class="w-full h-full object-cover" src="${step.img || './assets/icon1.png'}"/>
                                         </div>
                                     </div>
@@ -200,14 +194,14 @@
                             `;
                         } else {
                             return `
-                                <div class="reveal flex flex-col md:flex-row-reverse items-center gap-8 md:gap-16 relative z-10">
-                                    <div class="w-full md:w-1/2 md:text-left">
-                                        <span class="inline-block px-3 py-1 bg-secondary-container/50 text-on-secondary-container rounded-full font-label-sm text-label-sm mb-3">STEP 0${index + 1}</span>
-                                        <h3 class="korean-serif text-2xl md:text-3xl text-primary mb-2">${step.title || ''}</h3>
-                                        <p class="font-body-md text-body-md text-on-surface-variant">${(step.desc || '').replace(/\n/g, '<br>')}</p>
+                                <div class="reveal flex flex-col md:flex-row-reverse items-center gap-6 md:gap-8 relative z-10">
+                                    <div class="w-full md:w-1/2 md:text-left md:pl-4">
+                                        <span class="inline-block px-2.5 py-0.5 bg-secondary-container/50 text-on-secondary-container rounded-full font-label-sm text-[0.7rem] font-bold mb-2 tracking-wider">STEP 0${index + 1}</span>
+                                        <h3 class="korean-serif text-lg md:text-xl text-primary mb-2">${step.title || ''}</h3>
+                                        <p class="font-body-md text-sm md:text-base text-on-surface-variant leading-relaxed">${(step.desc || '').replace(/\n/g, '<br>')}</p>
                                     </div>
                                     <div class="w-full md:w-1/2">
-                                        <div class="aspect-[3/4] md:aspect-[4/3] rounded-xl overflow-hidden ambient-shadow">
+                                        <div class="aspect-[4/3] rounded-xl overflow-hidden ambient-shadow max-w-[400px] mx-auto md:mr-4 md:ml-auto">
                                             <img alt="${step.title || ''}" class="w-full h-full object-cover" src="${step.img || './assets/icon1.png'}"/>
                                         </div>
                                     </div>
@@ -216,8 +210,37 @@
                         }
                     }).join('');
                     targetRender.innerHTML = timelineLine + timelineContent;
-                    
-                } catch (e) { targetRender.innerHTML = `<div class="post-body bg-surface p-8 rounded-xl">${post.content_growth}</div>`; }
+                } catch (e) { targetRender.innerHTML = `<div class="post-body bg-surface p-6 rounded-xl">${post.content_growth}</div>`; }
+
+                // 2단계: 활용법 (새로운 카드 그리드 로직)
+                const usageRender = document.getElementById('usageRender');
+                try {
+                    const usageData = JSON.parse(post.content_usage);
+                    if (Array.isArray(usageData) && usageData.length > 0) {
+                        usageRender.className = "grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6";
+                        usageRender.innerHTML = usageData.map((use, i) => `
+                            <div class="group flex flex-col bg-surface rounded-[1.25rem] overflow-hidden border border-outline-variant/30 ambient-shadow hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
+                                <div class="aspect-video bg-surface-variant overflow-hidden relative border-b border-outline-variant/20">
+                                    <img src="${use.img || './assets/icon1.png'}" alt="${use.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                                    <div class="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-lg text-[0.7rem] font-bold text-primary shadow-sm tracking-wider">
+                                        POINT 0${i+1}
+                                    </div>
+                                </div>
+                                <div class="p-5 md:p-6 flex-1 flex flex-col bg-white">
+                                    <h3 class="korean-serif text-lg md:text-xl text-primary font-bold mb-2 group-hover:text-surface-tint transition-colors">${use.title}</h3>
+                                    <p class="font-body-md text-sm text-on-surface-variant leading-relaxed flex-1">${(use.desc || '').replace(/\n/g, '<br>')}</p>
+                                </div>
+                            </div>
+                        `).join('');
+                    } else {
+                        usageRender.className = "relative bg-surface p-6 md:p-8 rounded-[1.5rem] border border-outline-variant/20 ambient-shadow";
+                        usageRender.innerHTML = '<p class="text-center text-outline text-sm">등록된 활용법이 없습니다.</p>';
+                    }
+                } catch (e) {
+                    // 과거 호환 (JSON 형식이 아닌 일반 HTML 텍스트일 경우)
+                    usageRender.className = "relative bg-surface p-6 md:p-8 rounded-[1.5rem] border border-outline-variant/20 ambient-shadow post-body";
+                    usageRender.innerHTML = post.content_usage || '<p class="text-center text-outline text-sm">등록된 안내가 없습니다.</p>';
+                }
 
                 document.title = `하늘향 - ${post.title}`;
                 document.getElementById('postArticle').classList.remove('hidden');

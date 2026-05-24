@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>하늘향 - 정성으로 키워낸 자연</title>
+    <title>하늘향 - 전체 게시글</title>
     <link rel="icon" type="image/png" href="./assets/favicon.png">
 
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
@@ -56,7 +56,7 @@
         .reveal.active { opacity: 1; transform: translateY(0); }
     </style>
 </head>
-<body class="bg-background text-on-background font-body-md antialiased overflow-x-hidden">
+<body class="bg-background text-on-background font-body-md antialiased overflow-x-hidden min-h-screen flex flex-col">
 
     <nav class="fixed top-0 inset-x-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-outline-variant/30">
         <div class="relative flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto w-full">
@@ -73,51 +73,50 @@
         </div>
     </nav>
 
-    <main class="pt-[100px] md:pt-[120px]">
+    <main class="flex-1 pt-[100px] md:pt-[140px]">
         
-        <header class="relative py-16 md:py-24 px-margin-mobile md:px-margin-desktop flex items-center justify-center min-h-[60vh] overflow-hidden">
-            <div class="absolute inset-0 z-0">
-                <img src="https://images.unsplash.com/photo-1599940824399-b87987ceb72a?q=80&w=1200&auto=format&fit=crop" alt="하늘향 배경" class="w-full h-full object-cover opacity-10">
-                <div class="absolute inset-0 bg-gradient-to-b from-background via-background/80 to-background"></div>
-            </div>
-            <div class="relative z-10 max-w-3xl mx-auto text-center reveal">
-                <div class="inline-flex items-center justify-center px-4 py-1.5 mb-6 border border-primary/20 rounded-full bg-white/50 backdrop-blur-sm">
-                    <span class="text-xs font-bold text-primary tracking-widest uppercase">Premium Harvest</span>
-                </div>
-                <h1 class="headline-font text-3xl md:text-4xl lg:text-5xl text-primary mb-6 leading-tight">
-                    자연의 시간을 담은<br>하늘향의 정성
-                </h1>
-                <p class="text-sm md:text-base text-on-surface-variant max-w-2xl mx-auto leading-relaxed">
-                    고객님의 식탁에 오르기까지, 자연의 기다림 및 농부의 땀방울이 담긴<br class="hidden sm:block"> 하늘향의 생생한 수확 기록과 올바른 가공 소식을 전해드립니다.
-                </p>
-            </div>
-        </header>
-
-        <section id="story-section" class="py-20 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto reveal">
-            <div class="text-center mb-16">
-                <h2 class="headline-font text-2xl md:text-3xl text-primary font-medium mb-2">최근 성장 일지</h2>
+        <section class="px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto reveal">
+            <div class="text-center mb-10">
+                <h2 class="headline-font text-2xl md:text-3xl text-primary font-medium mb-2">전체 게시글 보기</h2>
                 <div class="w-12 h-0.5 bg-primary/20 mx-auto mt-4"></div>
             </div>
 
-            <div id="storyLoading" class="text-center py-12 text-on-surface-variant">농장의 수확 일지를 불러오는 중입니다...</div>
-            
-            <div id="blogListContainer" class="flex flex-col gap-8 hidden"></div>
-            
-            <div id="storyEmpty" class="hidden text-center py-12 text-on-surface-variant bg-surface-container-low rounded-xl">
-                <span class="material-symbols-outlined text-4xl mb-2 opacity-50 block">eco</span>
-                등록된 성장 일지가 없습니다.
+            <div class="bg-surface p-4 md:p-5 rounded-2xl border border-outline-variant/30 mb-10 flex flex-col md:flex-row gap-4 ambient-shadow">
+                <div class="flex-1">
+                    <label class="block text-xs font-bold text-primary mb-1.5 ml-1">포스트 검색</label>
+                    <input type="text" id="searchTitle" placeholder="이름으로 검색..." class="w-full px-4 py-2.5 text-sm bg-background border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all">
+                </div>
+                <div class="w-full md:w-48">
+                    <label class="block text-xs font-bold text-primary mb-1.5 ml-1">작성일자</label>
+                    <input type="date" id="searchDate" class="w-full px-4 py-2.5 text-sm bg-background border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all text-outline">
+                </div>
+                <div class="w-full md:w-40">
+                    <label class="block text-xs font-bold text-primary mb-1.5 ml-1">정렬 순서</label>
+                    <select id="sortOrder" class="w-full px-4 py-2.5 text-sm bg-background border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all">
+                        <option value="desc">최신순</option>
+                        <option value="asc">과거순</option>
+                    </select>
+                </div>
+                <div class="w-full md:w-auto flex items-end">
+                    <button onclick="loadMainContents()" class="w-full md:w-auto bg-primary text-white px-6 py-2.5 rounded-xl text-sm font-bold tracking-wide hover:opacity-90 active:scale-95 transition-all h-[42px] flex items-center justify-center gap-1">
+                        <span class="material-symbols-outlined text-base">search</span> 검색
+                    </button>
+                </div>
             </div>
 
-            <div id="moreBtnContainer" class="hidden text-center mt-12 reveal">
-                <a href="list.html" class="inline-flex items-center gap-2 px-8 py-3.5 border border-outline-variant text-primary rounded-xl font-bold hover:bg-primary hover:text-white hover:border-primary transition-all ambient-shadow group">
-                    전체 게시글 보기 <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
-                </a>
+            <div id="storyLoading" class="text-center py-12 text-on-surface-variant">게시글을 불러오는 중입니다...</div>
+            
+            <div id="blogListContainer" class="flex flex-col gap-8 hidden mb-16"></div>
+            
+            <div id="storyEmpty" class="hidden text-center py-16 text-on-surface-variant bg-surface-container-low rounded-xl mb-16">
+                <span class="material-symbols-outlined text-4xl mb-2 opacity-50 block">search_off</span>
+                조건에 맞는 게시글이 없습니다.
             </div>
         </section>
         
     </main>
 
-    <footer class="w-full py-16 px-margin-mobile md:px-margin-desktop flex flex-col items-center text-center gap-8 bg-surface-container-lowest border-t border-surface-container-low">
+    <footer class="w-full py-16 px-margin-mobile md:px-margin-desktop flex flex-col items-center text-center gap-8 bg-surface-container-lowest border-t border-surface-container-low mt-auto">
         <div class="flex flex-col items-center gap-6">
             <a class="block h-20 w-20 rounded-2xl overflow-hidden bg-white shadow-md border border-outline-variant/20" href="#">
                 <img alt="하늘향 로고" class="h-full w-full object-cover p-1" src="./assets/icon1.png"/>
@@ -145,27 +144,56 @@
         }
 
         async function loadMainContents() {
+            const loadingIndicator = document.getElementById('storyLoading');
+            const listContainer = document.getElementById('blogListContainer');
+            const emptyState = document.getElementById('storyEmpty');
+
+            loadingIndicator.classList.remove('hidden');
+            listContainer.classList.add('hidden');
+            emptyState.classList.add('hidden');
+
+            const searchTitle = document.getElementById('searchTitle').value.trim();
+            const searchDate = document.getElementById('searchDate').value;
+            const sortOrder = document.getElementById('sortOrder').value;
+
             try {
-                // limit(3)를 추가하여 최대 3개만 호출
-                const { data: posts, error } = await supabaseClient.from('posts').select('*').eq('status', 'published').order('created_at', { ascending: false }).limit(3);
+                let query = supabaseClient.from('posts').select('*').eq('status', 'published');
+                
+                if (sortOrder === 'asc') query = query.order('created_at', { ascending: true });
+                else query = query.order('created_at', { ascending: false });
+
+                if (searchTitle) query = query.ilike('title', `%${searchTitle}%`);
+
+                const { data: posts, error } = await query;
                 if (error) throw error;
 
-                document.getElementById('storyLoading').classList.add('hidden');
-                
-                if (!posts || posts.length === 0) { 
-                    document.getElementById('storyEmpty').classList.remove('hidden'); 
+                let filteredPosts = posts || [];
+
+                // JS Date filtering to perfectly match user's local timezone picking
+                if (searchDate) {
+                    filteredPosts = filteredPosts.filter(post => {
+                        const dateObj = new Date(post.created_at);
+                        const year = dateObj.getFullYear();
+                        const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+                        const day = String(dateObj.getDate()).padStart(2, '0');
+                        const formattedLocal = `${year}-${month}-${day}`;
+                        return formattedLocal === searchDate;
+                    });
+                }
+
+                loadingIndicator.classList.add('hidden');
+
+                if (filteredPosts.length === 0) { 
+                    emptyState.classList.remove('hidden'); 
                     return; 
                 }
 
-                const listContainer = document.getElementById('blogListContainer');
                 listContainer.classList.remove('hidden');
-                document.getElementById('moreBtnContainer').classList.remove('hidden'); // 게시글이 있을 때만 더보기 버튼 노출
                 listContainer.innerHTML = '';
 
-                posts.forEach(post => {
+                filteredPosts.forEach(post => {
                     let firstImg = './assets/icon1.png'; 
                     let plainText = '';
-                    
                     try {
                         const growthData = JSON.parse(post.content_growth);
                         if(growthData.steps && growthData.steps.length > 0) {

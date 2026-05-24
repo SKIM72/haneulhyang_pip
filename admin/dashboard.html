@@ -36,6 +36,10 @@
                     <span class="material-symbols-outlined text-base">manage_accounts</span> <span class="hidden sm:inline">계정 관리</span>
                 </button>
                 
+                <a href="../index.html" class="text-sm font-medium text-outline hover:text-primary transition-colors flex items-center gap-1 px-2 py-1.5">
+                    <span class="material-symbols-outlined text-base">home</span> <span class="hidden sm:inline">홈페이지</span>
+                </a>
+                
                 <button id="btnLogout" class="text-sm font-medium text-outline hover:text-red-600 transition-colors flex items-center gap-1 px-2 py-1.5">
                     <span class="material-symbols-outlined text-base">logout</span> <span class="hidden sm:inline">로그아웃</span>
                 </button>
@@ -44,7 +48,7 @@
     </header>
 
     <main class="flex-1 max-w-5xl mx-auto w-full px-4 py-8">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
             <div>
                 <h1 class="text-2xl font-bold text-primary mb-1">제품 소개글 관리</h1>
                 <p class="text-sm text-outline">홈페이지에 노출될 소개글을 관리하고 새 글을 작성할 수 있습니다.</p>
@@ -54,13 +58,36 @@
             </button>
         </div>
 
+        <div class="bg-surface p-4 md:p-5 rounded-2xl border border-outline-variant/30 mb-8 flex flex-col md:flex-row gap-4 ambient-shadow">
+            <div class="flex-1">
+                <label class="block text-xs font-bold text-primary mb-1.5 ml-1">포스트 검색</label>
+                <input type="text" id="searchTitle" placeholder="이름으로 검색..." class="w-full px-4 py-2.5 text-sm bg-background border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all">
+            </div>
+            <div class="w-full md:w-48">
+                <label class="block text-xs font-bold text-primary mb-1.5 ml-1">작성일자</label>
+                <input type="date" id="searchDate" class="w-full px-4 py-2.5 text-sm bg-background border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all text-outline">
+            </div>
+            <div class="w-full md:w-40">
+                <label class="block text-xs font-bold text-primary mb-1.5 ml-1">정렬 순서</label>
+                <select id="sortOrder" class="w-full px-4 py-2.5 text-sm bg-background border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all">
+                    <option value="desc">최신순</option>
+                    <option value="asc">과거순</option>
+                </select>
+            </div>
+            <div class="w-full md:w-auto flex items-end">
+                <button onclick="loadPosts()" class="w-full md:w-auto bg-primary text-white px-6 py-2.5 rounded-xl text-sm font-bold tracking-wide hover:opacity-90 active:scale-95 transition-all h-[42px] flex items-center justify-center gap-1">
+                    <span class="material-symbols-outlined text-base">search</span> 검색
+                </button>
+            </div>
+        </div>
+
         <div class="bg-surface rounded-2xl border border-outline-variant/30 ambient-shadow overflow-hidden">
             <div id="loadingIndicator" class="p-8 text-center text-outline">데이터를 불러오는 중입니다...</div>
             <ul id="postsList" class="divide-y divide-outline-variant/30 hidden"></ul>
             <div id="emptyState" class="hidden p-12 text-center flex flex-col items-center">
-                <span class="material-symbols-outlined text-6xl text-outline-variant mb-4">inventory_2</span>
-                <h3 class="text-lg font-medium text-primary mb-2">등록된 소개글이 없습니다</h3>
-                <p class="text-sm text-outline">우측 상단의 '새 소개글 작성' 버튼을 눌러 첫 제품을 소개해 보세요.</p>
+                <span class="material-symbols-outlined text-6xl text-outline-variant mb-4">search_off</span>
+                <h3 class="text-lg font-medium text-primary mb-2">조건에 맞는 소개글이 없습니다</h3>
+                <p class="text-sm text-outline">조건을 변경하거나 새로운 글을 작성해 보세요.</p>
             </div>
         </div>
     </main>
@@ -107,7 +134,7 @@
             return session;
         }
 
-        /* --- [추가됨] 계정 관리 모달 관련 함수 --- */
+        /* --- 계정 관리 모달 관련 함수 --- */
         async function openAccountModal() {
             document.getElementById('accountModal').classList.remove('hidden');
             await loadAccounts();
@@ -167,25 +194,55 @@
                 await loadAccounts(); // 목록 새로고침
             }
         };
-        /* ------------------------------------------- */
 
-        // 2. 게시글 데이터 불러오기 (기존 동일)
+        // 2. 게시글 데이터 불러오기 (필터 및 정렬 적용)
         async function loadPosts() {
             const loadingIndicator = document.getElementById('loadingIndicator');
             const postsList = document.getElementById('postsList');
             const emptyState = document.getElementById('emptyState');
 
-            const { data: posts, error } = await supabaseClient
-                .from('posts').select('*').order('created_at', { ascending: false });
+            const searchTitle = document.getElementById('searchTitle').value.trim();
+            const searchDate = document.getElementById('searchDate').value;
+            const sortOrder = document.getElementById('sortOrder').value;
 
+            loadingIndicator.classList.remove('hidden');
+            postsList.classList.add('hidden');
+            emptyState.classList.add('hidden');
+
+            // 동적 쿼리 생성
+            let query = supabaseClient.from('posts').select('*');
+            
+            if (sortOrder === 'asc') query = query.order('created_at', { ascending: true });
+            else query = query.order('created_at', { ascending: false });
+
+            if (searchTitle) query = query.ilike('title', `%${searchTitle}%`);
+
+            const { data: posts, error } = await query;
             loadingIndicator.classList.add('hidden');
 
-            if (!posts || posts.length === 0) {
-                emptyState.classList.remove('hidden'); return;
-            }
-            postsList.classList.remove('hidden'); postsList.innerHTML = '';
+            let filteredPosts = posts || [];
 
-            posts.forEach(post => {
+            // 정확한 사용자의 로컬 날짜 기준 필터링
+            if (searchDate) {
+                filteredPosts = filteredPosts.filter(post => {
+                    const dateObj = new Date(post.created_at);
+                    const year = dateObj.getFullYear();
+                    const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+                    const day = String(dateObj.getDate()).padStart(2, '0');
+                    const formattedLocal = `${year}-${month}-${day}`;
+                    return formattedLocal === searchDate;
+                });
+            }
+
+            if (!filteredPosts || filteredPosts.length === 0) {
+                emptyState.classList.remove('hidden'); 
+                return;
+            }
+            
+            postsList.classList.remove('hidden'); 
+            postsList.innerHTML = '';
+
+            filteredPosts.forEach(post => {
                 const statusBadge = post.status === 'published' 
                     ? `<span class="px-2.5 py-1 bg-green-100 text-green-800 text-xs font-bold rounded-md">발행됨</span>`
                     : `<span class="px-2.5 py-1 bg-gray-100 text-gray-700 text-xs font-bold rounded-md">임시저장</span>`;
@@ -221,7 +278,7 @@
         window.deletePost = async function(id) {
             if (confirm('정말 이 소개글을 삭제하시겠습니까?\n삭제된 글은 복구할 수 없습니다.')) {
                 await supabaseClient.from('posts').delete().eq('id', id);
-                loadPosts();
+                loadPosts(); // 삭제 후 현재 필터/검색 조건으로 목록 갱신
             }
         };
 
