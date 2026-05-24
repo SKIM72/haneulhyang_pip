@@ -4,13 +4,11 @@
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>하늘향 - 정성으로 키워낸 자연</title>
-    
     <link rel="icon" type="image/png" href="./assets/favicon.png">
 
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script id="tailwind-config">
@@ -18,21 +16,32 @@
             darkMode: "class",
             theme: {
                 extend: {
-                    colors: {
-                        "primary": "#17341c",
-                        "background": "#fcf9f8",
-                        "surface": "#ffffff",
-                        "on-background": "#1c1b1b",
-                        "on-surface-variant": "#424841",
-                        "outline-variant": "#c2c8bf",
-                        "surface-container-low": "#f6f3f2",
-                        "surface-container-lowest": "#ffffff"
+                    "colors": {
+                        "primary": "#17341c", "on-secondary-fixed": "#1c1c19", "inverse-surface": "#313030", "surface-tint": "#47664a",
+                        "on-background": "#1c1b1b", "on-surface": "#1c1b1b", "on-primary-container": "#98ba99", "surface-container": "#f0eded",
+                        "error-container": "#ffdad6", "inverse-primary": "#adcfad", "inverse-on-surface": "#f3f0ef", "surface-dim": "#dcd9d9",
+                        "on-secondary-fixed-variant": "#474743", "on-primary-fixed-variant": "#2f4e33", "secondary": "#5f5e5b",
+                        "surface-container-low": "#f6f3f2", "background": "#fcf9f8", "on-primary-fixed": "#03210b", "surface-container-high": "#eae7e7",
+                        "secondary-container": "#e5e2dd", "tertiary": "#41271f", "on-secondary": "#ffffff", "surface-container-lowest": "#ffffff",
+                        "outline": "#737971", "error": "#ba1a1a", "tertiary-fixed": "#ffdbd0", "outline-variant": "#c2c8bf",
+                        "on-error-container": "#93000a", "secondary-fixed": "#e5e2dd", "surface": "#fcf9f8", "on-error": "#ffffff",
+                        "tertiary-container": "#5a3d34", "on-tertiary-fixed": "#2c160e", "secondary-fixed-dim": "#c9c6c2",
+                        "on-surface-variant": "#424841", "on-tertiary-container": "#d0a99d", "surface-variant": "#e5e2e1",
+                        "primary-container": "#2d4b31", "tertiary-fixed-dim": "#e7bdb1", "on-secondary-container": "#656461",
+                        "primary-fixed": "#c8ecc8", "primary-fixed-dim": "#adcfad", "on-tertiary-fixed-variant": "#5d4037",
+                        "on-tertiary": "#ffffff", "on-primary": "#ffffff", "surface-container-highest": "#e5e2e1", "surface-bright": "#fcf9f8"
                     },
-                    spacing: {
-                        "margin-mobile": "20px",
-                        "margin-desktop": "64px",
-                        "gutter": "24px",
-                        "container-max": "1200px"
+                    "borderRadius": { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem", "2xl": "1rem" },
+                    "spacing": { "margin-mobile": "20px", "margin-desktop": "64px", "gutter": "24px", "base": "8px", "container-max": "1200px" },
+                    "fontFamily": {
+                        "headline-lg": ["EB Garamond", "serif"], 
+                        "label-lg": ["Hanken Grotesk", "sans-serif"], 
+                        "body-lg": ["Hanken Grotesk", "sans-serif"],
+                        "headline-lg-mobile": ["EB Garamond", "serif"], 
+                        "label-sm": ["Hanken Grotesk", "sans-serif"], 
+                        "headline-md": ["EB Garamond", "serif"],
+                        "display-lg": ["EB Garamond", "serif"], 
+                        "body-md": ["Hanken Grotesk", "sans-serif"]
                     }
                 }
             }
@@ -41,41 +50,35 @@
     <style>
         body { font-family: 'Hanken Grotesk', sans-serif; }
         .headline-font { font-family: 'EB Garamond', serif; }
-        .ambient-shadow { box-shadow: 0 12px 48px -12px rgba(27, 61, 47, 0.08); }
-        
-        .reveal {
-            opacity: 0;
-            transform: translateY(40px);
-            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .reveal.active {
-            opacity: 1;
-            transform: translateY(0);
-        }
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .ambient-shadow { box-shadow: 0 24px 48px rgba(27, 61, 47, 0.08); }
+        .reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.5, 0, 0, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
     </style>
 </head>
-<body class="bg-background text-on-background antialiased overflow-x-hidden">
+<body class="bg-background text-on-background font-body-md antialiased overflow-x-hidden">
 
-    <nav class="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-outline-variant/30">
-        <div class="flex items-center px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto relative">
-            <div class="flex items-center gap-4 flex-1">
-                <a href="index.html" class="block h-14 w-14 rounded-full overflow-hidden bg-white shadow-sm">
-                    <img src="./assets/icon1.png" alt="하늘향 로고" class="h-full w-full object-contain p-1">
-                </a>
-                <span class="headline-font font-bold text-xl text-primary tracking-wider hidden sm:block">하늘향</span>
+    <nav class="fixed top-0 inset-x-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-outline-variant/30">
+        <div class="flex justify-center md:justify-between items-center px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto w-full">
+            
+            <button class="md:hidden text-primary p-2 absolute right-margin-mobile">
+                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">menu</span>
+            </button>
+            
+            <ul class="hidden md:flex gap-8 items-center flex-1">
+                <li><a class="font-label-lg text-label-lg tracking-widest text-primary border-b-2 border-primary pb-1" href="#story-section">STORY</a></li>
+                <li><a class="font-label-lg text-label-lg tracking-widest text-on-surface-variant hover:text-primary transition-colors" href="#">USAGE</a></li>
+                <li><a class="font-label-lg text-label-lg tracking-widest text-on-surface-variant hover:text-primary transition-colors" href="#">BRAND</a></li>
+            </ul>
+            
+            <a class="block h-16 w-16 md:h-20 md:w-20 rounded-2xl overflow-hidden bg-white shadow-sm border border-outline-variant/20" href="index.html">
+                <img alt="하늘향 로고" class="h-full w-full object-cover p-1" src="./assets/icon1.png"/>
+            </a>
+            
+            <div class="hidden md:flex flex-1 justify-end">
+                <button class="font-label-lg text-label-lg tracking-widest text-primary hover:opacity-80 transition-opacity">SHOP NOW</button>
             </div>
             
-            <div class="hidden md:flex items-center justify-center gap-8 absolute left-1/2 -translate-x-1/2">
-                <a href="#story-section" class="text-primary font-bold tracking-widest hover:opacity-80 transition-opacity">STORY</a>
-                <a href="#usage-section" class="text-on-surface-variant hover:text-primary transition-colors font-bold tracking-widest hover:opacity-80">USAGE</a>
-            </div>
-            
-            <div class="flex items-center justify-end flex-1">
-                <button class="bg-primary text-white px-6 py-2 rounded-lg font-medium text-sm tracking-widest hover:opacity-90 transition-opacity">
-                    SHOP NOW
-                </button>
-            </div>
         </div>
     </nav>
 
@@ -90,10 +93,10 @@
                 <div class="inline-flex items-center justify-center px-4 py-1.5 mb-6 border border-primary/20 rounded-full bg-white/50 backdrop-blur-sm">
                     <span class="text-xs font-bold text-primary tracking-widest uppercase">Premium Harvest</span>
                 </div>
-                <h1 class="headline-font text-4xl md:text-5xl lg:text-6xl text-primary mb-6 leading-tight">
+                <h1 class="headline-font text-3xl md:text-4xl lg:text-5xl text-primary mb-6 leading-tight">
                     자연의 시간을 담은<br>하늘향의 정성
                 </h1>
-                <p class="text-base md:text-lg text-on-surface-variant max-w-2xl mx-auto leading-relaxed">
+                <p class="text-sm md:text-base text-on-surface-variant max-w-2xl mx-auto leading-relaxed">
                     고객님의 식탁에 오르기까지, 자연의 기다림 및 농부의 땀방울이 담긴<br class="hidden sm:block"> 하늘향의 생생한 수확 기록과 올바른 가공 소식을 전해드립니다.
                 </p>
             </div>
@@ -101,45 +104,33 @@
 
         <section id="story-section" class="py-20 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto reveal">
             <div class="text-center mb-16">
-                <h2 class="headline-font text-3xl md:text-4xl text-primary font-medium mb-2">씨앗에서 식탁까지</h2>
+                <h2 class="headline-font text-2xl md:text-3xl text-primary font-medium mb-2">씨앗에서 식탁까지</h2>
                 <p class="text-xs text-outline tracking-widest uppercase font-semibold">From Seed to Table</p>
                 <div class="w-12 h-0.5 bg-primary/20 mx-auto mt-4"></div>
             </div>
 
             <div id="storyLoading" class="text-center py-12 text-on-surface-variant">농장의 수확 일지를 불러오는 중입니다...</div>
-
-            <div id="growthBentoGrid" class="hidden w-full"></div>
+            
+            <div id="blogListContainer" class="flex flex-col gap-8 hidden"></div>
             
             <div id="storyEmpty" class="hidden text-center py-12 text-on-surface-variant bg-surface-container-low rounded-xl">
                 <span class="material-symbols-outlined text-4xl mb-2 opacity-50 block">eco</span>
                 등록된 성장 일지가 없습니다. 관리자 페이지에서 첫 글을 발행해 주세요.
             </div>
         </section>
-
-        <section id="usage-section" class="py-24 relative overflow-hidden bg-surface-container-low reveal">
-            <div class="px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
-                <div class="text-center mb-16">
-                    <h2 class="headline-font text-3xl md:text-4xl text-primary mb-3">☕ 하늘향 제품 안내 및 100% 활용법</h2>
-                    <p class="text-sm text-on-surface-variant max-w-xl mx-auto">일상에서 안전하고 맛있게 즐기는 건강한 가이드</p>
-                    <div class="w-12 h-0.5 bg-primary/20 mx-auto mt-4"></div>
-                </div>
-
-                <div id="usageLoading" class="text-center py-12 text-on-surface-variant">활용법 가이드를 불러오는 중입니다...</div>
-
-                <div id="usageCardGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 hidden"></div>
-            </div>
-        </section>
         
     </main>
 
-    <footer class="w-full py-16 px-margin-mobile md:px-margin-desktop flex flex-col md:flex-row justify-between items-center gap-8 bg-surface-container-lowest border-t border-surface-container-low">
-        <div class="flex items-center gap-4">
-            <img src="./assets/icon1.png" alt="하늘향 로고" class="w-12 h-12 object-contain grayscale opacity-60">
-            <p class="text-sm text-secondary font-medium">© 2026 하늘향 PREMIUM WELLNESS. ALL RIGHTS RESERVED.</p>
+    <footer class="w-full py-16 px-margin-mobile md:px-margin-desktop flex flex-col items-center text-center gap-8 bg-surface-container-lowest border-t border-surface-container-low">
+        <div class="flex flex-col items-center gap-6">
+            <a class="block h-20 w-20 rounded-2xl overflow-hidden bg-white shadow-md border border-outline-variant/20" href="#">
+                <img alt="하늘향 로고" class="h-full w-full object-cover p-1" src="./assets/icon1.png"/>
+            </a>
+            <span class="font-body-md text-body-md text-secondary">© 2026 하늘향 PREMIUM WELLNESS. ALL RIGHTS RESERVED.</span>
         </div>
-        <div class="flex gap-6 text-sm font-bold text-on-surface-variant">
-            <a href="admin/login.html" class="hover:text-primary transition-colors">관리자 시스템 접속</a>
-        </div>
+        <ul class="flex flex-col md:flex-row gap-6 font-body-md text-body-md text-on-surface-variant justify-center">
+            <li><a class="hover:text-primary transition-colors" href="admin/login.html">관리자 시스템 접속</a></li>
+        </ul>
     </footer>
 
     <script>
@@ -148,128 +139,74 @@
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         function initScrollReveal() {
-            const reveals = document.querySelectorAll(".reveal");
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) entry.target.classList.add('active');
-                });
-            }, { threshold: 0.05 });
-            reveals.forEach(el => observer.observe(el));
+            setTimeout(() => {
+                const reveals = document.querySelectorAll(".reveal");
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('active'); });
+                }, { threshold: 0.1 });
+                reveals.forEach(el => observer.observe(el));
+            }, 100);
         }
 
         function parseTextSummary(htmlString, maxLength = 75) {
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = htmlString || '';
+            const tempDiv = document.createElement('div'); tempDiv.innerHTML = htmlString || '';
             let text = tempDiv.textContent || tempDiv.innerText || '';
-            if (text.length > maxLength) text = text.substring(0, maxLength) + '...';
-            return text;
+            return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
         }
 
         async function loadMainContents() {
             try {
-                const { data: posts, error } = await supabaseClient
-                    .from('posts').select('*').eq('status', 'published').order('created_at', { ascending: false });
-
+                const { data: posts, error } = await supabaseClient.from('posts').select('*').eq('status', 'published').order('created_at', { ascending: false });
                 if (error) throw error;
 
                 document.getElementById('storyLoading').classList.add('hidden');
-                document.getElementById('usageLoading').classList.add('hidden');
+                if (!posts || posts.length === 0) { document.getElementById('storyEmpty').classList.remove('hidden'); return; }
 
-                if (!posts || posts.length === 0) {
-                    document.getElementById('storyEmpty').classList.remove('hidden');
-                    return;
-                }
+                const listContainer = document.getElementById('blogListContainer');
+                listContainer.classList.remove('hidden');
+                listContainer.innerHTML = '';
 
-                const bentoGrid = document.getElementById('growthBentoGrid');
-                const cardGrid = document.getElementById('usageCardGrid');
-                
-                bentoGrid.classList.remove('hidden');
-                cardGrid.classList.remove('hidden');
-
-                // 1️⃣ [상단 구역] 최신 글의 기획 데이터(JSON) 파싱 및 레이아웃 분기
-                const latestPost = posts[0];
-                try {
-                    const growthData = JSON.parse(latestPost.content_growth);
-                    const steps = growthData.steps || [];
-                    const layout = growthData.layout || 'bento';
-
-                    if (layout === 'bento') {
-                        bentoGrid.className = "grid grid-cols-1 md:grid-cols-3 gap-gutter auto-rows-[300px]";
-                        bentoGrid.innerHTML = steps.map((step, index) => {
-                            let colSpan = 'md:col-span-1';
-                            if (index === 0 || index % 4 === 0) colSpan = 'md:col-span-2';
-                            return `
-                                <div onclick="window.location.href='detail.html?id=${latestPost.id}'" class="${colSpan} relative rounded-xl overflow-hidden group ambient-shadow bg-surface-container-lowest border border-primary/5 cursor-pointer min-h-[300px]">
-                                    <img src="${step.img || './assets/icon1.png'}" alt="" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
-                                    <div class="absolute inset-0 bg-gradient-to-t from-primary/95 via-primary/40 to-transparent"></div>
-                                    <div class="absolute bottom-0 left-0 p-6 md:p-8 w-full">
-                                        <span class="inline-block px-3 py-1 mb-2.5 rounded-full bg-white/20 text-white font-semibold text-xs backdrop-blur-sm tracking-widest">STEP 0${index+1}</span>
-                                        <h3 class="headline-font text-xl md:text-2xl text-white font-bold mb-2 truncate">${step.title || '하늘향 이야기'}</h3>
-                                        <p class="text-white/80 text-xs md:text-sm max-w-xl line-clamp-2">${step.desc || ''}</p>
-                                    </div>
-                                </div>
-                            `;
-                        }).join('');
-                    } else {
-                        // 지그재그 타임라인 빌딩
-                        bentoGrid.className = "flex flex-col gap-12 md:gap-16 relative w-full";
-                        const timelineLine = '<div class="hidden md:block absolute left-1/2 top-0 bottom-0 w-[1px] bg-outline-variant/30 transform -translate-x-1/2 z-0"></div>';
-                        const timelineContent = steps.map((step, index) => {
-                            const isEven = index % 2 === 0;
-                            return `
-                                <div onclick="window.location.href='detail.html?id=${latestPost.id}'" class="flex flex-col ${isEven ? 'md:flex-row' : 'md:flex-row-reverse'} items-center gap-6 md:gap-12 relative z-10 w-full cursor-pointer group">
-                                    <div class="w-full md:w-1/2 ${isEven ? 'md:text-right' : 'md:text-left'}">
-                                        <span class="inline-block px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-bold mb-2">STEP ${String(index + 1).padStart(2, '0')}</span>
-                                        <h3 class="text-xl font-bold text-primary mb-2 group-hover:opacity-80 transition-opacity">${step.title || '하늘향 이야기'}</h3>
-                                        <p class="text-sm text-on-surface-variant leading-relaxed line-clamp-3">${step.desc || ''}</p>
-                                    </div>
-                                    <div class="w-full md:w-1/2">
-                                        <div class="aspect-[4/3] rounded-xl overflow-hidden shadow-md border border-outline-variant/20">
-                                            <img src="${step.img || './assets/icon1.png'}" alt="" class="w-full h-full object-cover group-hover:scale-102 transition-transform duration-500">
-                                        </div>
-                                    </div>
-                                </div>
-                            `;
-                        }).join('');
-                        bentoGrid.innerHTML = timelineLine + timelineContent;
-                    }
-                } catch (e) {
-                    bentoGrid.innerHTML = `<div class="p-6 text-center text-outline">소개글 데이터를 읽어오는데 오류가 발생했습니다.</div>`;
-                }
-
-                // 2️⃣ [하단 구역] 제품 안내 목록 리스트 카드 바인딩
-                cardGrid.innerHTML = '';
                 posts.forEach(post => {
-                    const tempDiv = document.createElement('div');
-                    tempDiv.innerHTML = post.content_usage || '';
-                    const imgEl = tempDiv.querySelector('img');
+                    let firstImg = './assets/icon1.png'; 
+                    let plainText = '';
                     
-                    const cardItem = document.createElement('div');
-                    cardItem.className = "bg-surface rounded-2xl border border-outline-variant/20 ambient-shadow overflow-hidden flex flex-col group hover:-translate-y-1 transition-transform duration-300 cursor-pointer";
-                    cardItem.onclick = () => window.location.href = `detail.html?id=${post.id}`;
-                    cardItem.innerHTML = `
-                        <div class="h-48 w-full overflow-hidden bg-gray-50 flex items-center justify-center border-b border-outline-variant/10">
-                            <img src="${imgEl ? imgEl.src : './assets/icon1.png'}" alt="" class="w-full h-full ${imgEl ? 'object-cover' : 'object-contain p-8 opacity-40'} transition-transform duration-700 group-hover:scale-105">
-                        </div>
-                        <div class="p-6 flex flex-col flex-1">
-                            <div class="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mb-4 text-primary group-hover:bg-primary group-hover:text-white transition-colors">
-                                <span class="material-symbols-outlined text-xl">local_cafe</span>
+                    try {
+                        const growthData = JSON.parse(post.content_growth);
+                        if(growthData.steps && growthData.steps.length > 0) {
+                            if(growthData.steps[0].img) firstImg = growthData.steps[0].img;
+                            plainText = growthData.steps[0].desc || '';
+                        }
+                    } catch(e) {
+                        const tempDiv = document.createElement('div'); tempDiv.innerHTML = post.content_growth || '';
+                        const img = tempDiv.querySelector('img'); if(img) firstImg = img.src;
+                        plainText = tempDiv.innerText || '';
+                    }
+
+                    if(plainText.length > 120) plainText = plainText.substring(0, 120) + '...';
+                    const dateOpts = { year: 'numeric', month: 'long', day: 'numeric' };
+                    const dateStr = new Date(post.created_at).toLocaleDateString('ko-KR', dateOpts);
+
+                    const postHTML = `
+                        <div class="reveal flex flex-col-reverse md:flex-row gap-6 md:gap-8 py-8 border-b border-outline-variant/30 cursor-pointer group hover:bg-surface-container-low/50 px-4 md:px-6 rounded-2xl transition-colors" onclick="window.location.href='detail.html?id=${post.id}'">
+                            <div class="flex-1 flex flex-col justify-center">
+                                <div class="flex items-center gap-2.5 mb-3">
+                                    <div class="w-8 h-8 rounded-full overflow-hidden bg-white border border-outline-variant/30 shrink-0">
+                                        <img src="./assets/icon1.png" class="w-full h-full object-cover p-0.5">
+                                    </div>
+                                    <span class="font-bold text-sm text-primary">하늘향</span>
+                                    <span class="text-xs text-outline font-medium">${dateStr}</span>
+                                </div>
+                                <h3 class="font-headline-md text-2xl md:text-3xl font-bold text-primary mb-3 group-hover:text-surface-tint transition-colors">${post.title}</h3>
+                                <p class="font-body-md text-base text-on-surface-variant line-clamp-3 leading-relaxed">${plainText}</p>
                             </div>
-                            <h3 class="headline-font text-lg font-bold text-primary mb-2 line-clamp-1">${post.title}</h3>
-                            <p class="text-sm text-on-surface-variant line-clamp-3 mb-4 flex-1 leading-relaxed">${parseTextSummary(post.content_usage, 100)}</p>
-                            <span class="text-xs font-bold text-primary flex items-center gap-1 group-hover:gap-2 transition-all">
-                                가이드 보기 <span class="material-symbols-outlined text-xs">arrow_forward</span>
-                            </span>
+                            <div class="w-full md:w-[220px] lg:w-[260px] aspect-[4/3] shrink-0 rounded-xl overflow-hidden bg-surface-variant">
+                                <img src="${firstImg}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                            </div>
                         </div>
                     `;
-                    cardGrid.appendChild(cardItem);
+                    listContainer.innerHTML += postHTML;
                 });
-
-            } catch (error) {
-                console.error(error);
-            } finally {
-                initScrollReveal();
-            }
+            } catch (error) { console.error(error); } finally { initScrollReveal(); }
         }
         document.addEventListener('DOMContentLoaded', loadMainContents);
     </script>
