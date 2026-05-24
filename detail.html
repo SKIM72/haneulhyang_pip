@@ -87,7 +87,7 @@
             </div>
             
             <div class="flex justify-end items-center z-10">
-                <a href="https://www.band.us/band/67603330" target="_blank" rel="noopener noreferrer" class="group block w-9 h-9 md:w-11 md:h-11 transition-transform duration-300 hover:scale-110" title="하늘향 밴드 바로가기">
+                <a href="https://www.band.us/band/67603330/intro" target="_blank" rel="noopener noreferrer" class="group block w-9 h-9 md:w-11 md:h-11 transition-transform duration-300 hover:scale-110" title="하늘향 밴드 바로가기">
                     <img src="./assets/band.png" alt="네이버 밴드" class="w-full h-full object-contain block group-hover:hidden">
                     <img src="./assets/band_hover.png" alt="네이버 밴드" class="w-full h-full object-contain hidden group-hover:block">
                 </a>
@@ -176,27 +176,17 @@
                 try {
                     const growthData = JSON.parse(post.content_growth);
                     const steps = growthData.steps || [];
+                    const layoutType = growthData.layout || 'zigzag';
 
-                    targetRender.className = "flex flex-col gap-8 md:gap-12 relative max-w-4xl mx-auto";
-                    const timelineLine = '<div class="hidden md:block absolute left-1/2 top-0 bottom-0 w-[1px] bg-outline-variant/30 transform -translate-x-1/2 z-0"></div>';
-                    
-                    const timelineContent = steps.map((step, index) => {
-                        const isEven = index % 2 === 0;
-                        const images = step.images && step.images.length > 0 ? step.images : (step.img ? [step.img] : ['./assets/icon1.png']);
-                        
-                        // 💡 추가: 저장된 비율 속성을 불러와 클래스에 적용 (기본값 landscape)
-                        const aspect = step.aspect || 'landscape';
-                        const aspectClass = aspect === 'portrait' ? 'aspect-[3/4] max-w-[300px]' : 'aspect-[4/3] max-w-[400px]';
-                        
-                        let imageRender = '';
+                    const renderImages = (images, title) => {
                         if(images.length === 1) {
-                            imageRender = `<img alt="${step.title || ''}" class="w-full h-full object-cover" src="${images[0]}"/>`;
+                            return `<img alt="${title || ''}" class="w-full h-full object-cover" src="${images[0]}"/>`;
                         } else {
-                            imageRender = `
+                            return `
                                 <div class="flex w-full h-full overflow-x-auto snap-x snap-mandatory scrollbar-hide">
                                     ${images.map(img => `
                                         <div class="w-full h-full flex-shrink-0 snap-center relative">
-                                            <img alt="${step.title || ''}" class="w-full h-full object-cover" src="${img}"/>
+                                            <img alt="${title || ''}" class="w-full h-full object-cover" src="${img}"/>
                                         </div>
                                     `).join('')}
                                 </div>
@@ -205,40 +195,78 @@
                                 </div>
                             `;
                         }
+                    };
 
-                        if (isEven) {
+                    if (layoutType === 'bento') {
+                        targetRender.className = "grid grid-cols-1 md:grid-cols-2 gap-6 relative max-w-4xl mx-auto";
+                        const bentoContent = steps.map((step, index) => {
+                            const images = step.images && step.images.length > 0 ? step.images : (step.img ? [step.img] : ['./assets/icon1.png']);
+                            const aspectClass = step.aspect === 'portrait' ? 'aspect-[3/4]' : 'aspect-[4/3]';
+                            const colSpanClass = (index % 3 === 0) ? 'md:col-span-2 flex flex-col md:flex-row' : 'col-span-1 flex flex-col';
+                            const imgContainerClass = (index % 3 === 0) ? 'w-full md:w-1/2' : 'w-full';
+                            const textContainerClass = (index % 3 === 0) ? 'w-full md:w-1/2 md:pl-6 md:justify-center pt-4 md:pt-0' : 'w-full pt-4';
+
                             return `
-                                <div class="reveal flex flex-col md:flex-row items-center gap-6 md:gap-8 relative z-10">
-                                    <div class="w-full md:w-1/2 md:text-right md:pr-4">
-                                        <span class="inline-block px-2.5 py-0.5 bg-secondary-container/50 text-on-secondary-container rounded-full font-label-sm text-[0.7rem] font-bold mb-2 tracking-wider">STEP 0${index + 1}</span>
-                                        <h3 class="korean-serif text-lg md:text-xl text-primary mb-2">${step.title || ''}</h3>
-                                        <p class="font-body-md text-sm md:text-base text-on-surface-variant leading-relaxed">${(step.desc || '').replace(/\n/g, '<br>')}</p>
-                                    </div>
-                                    <div class="w-full md:w-1/2">
-                                        <div class="relative ${aspectClass} rounded-xl overflow-hidden ambient-shadow mx-auto md:ml-4 md:mr-auto transition-all">
-                                            ${imageRender}
+                                <div class="${colSpanClass} reveal bg-surface p-6 rounded-[1.5rem] border border-outline-variant/30 ambient-shadow group hover:-translate-y-1 transition-all">
+                                    <div class="${imgContainerClass}">
+                                        <div class="relative ${aspectClass} rounded-xl overflow-hidden bg-surface-variant w-full mx-auto">
+                                            ${renderImages(images, step.title)}
                                         </div>
+                                    </div>
+                                    <div class="${textContainerClass} flex flex-col gap-2">
+                                        <span class="inline-block px-3 py-1 bg-secondary-container/50 text-on-secondary-container rounded-full font-label-sm text-[0.7rem] font-bold tracking-wider w-max mb-1">STEP 0${index + 1}</span>
+                                        <h3 class="korean-serif text-xl md:text-2xl text-primary font-bold group-hover:text-surface-tint transition-colors">${step.title || ''}</h3>
+                                        <p class="font-body-md text-sm md:text-base text-on-surface-variant leading-relaxed">${(step.desc || '').replace(/\n/g, '<br>')}</p>
                                     </div>
                                 </div>
                             `;
-                        } else {
-                            return `
-                                <div class="reveal flex flex-col md:flex-row-reverse items-center gap-6 md:gap-8 relative z-10">
-                                    <div class="w-full md:w-1/2 md:text-left md:pl-4">
-                                        <span class="inline-block px-2.5 py-0.5 bg-secondary-container/50 text-on-secondary-container rounded-full font-label-sm text-[0.7rem] font-bold mb-2 tracking-wider">STEP 0${index + 1}</span>
-                                        <h3 class="korean-serif text-lg md:text-xl text-primary mb-2">${step.title || ''}</h3>
-                                        <p class="font-body-md text-sm md:text-base text-on-surface-variant leading-relaxed">${(step.desc || '').replace(/\n/g, '<br>')}</p>
-                                    </div>
-                                    <div class="w-full md:w-1/2">
-                                        <div class="relative ${aspectClass} rounded-xl overflow-hidden ambient-shadow mx-auto md:mr-4 md:ml-auto transition-all">
-                                            ${imageRender}
+                        }).join('');
+                        targetRender.innerHTML = bentoContent;
+
+                    } else {
+                        targetRender.className = "flex flex-col gap-8 md:gap-12 relative max-w-4xl mx-auto";
+                        const timelineLine = '<div class="hidden md:block absolute left-1/2 top-0 bottom-0 w-[1px] bg-outline-variant/30 transform -translate-x-1/2 z-0"></div>';
+                        
+                        const timelineContent = steps.map((step, index) => {
+                            const isEven = index % 2 === 0;
+                            const images = step.images && step.images.length > 0 ? step.images : (step.img ? [step.img] : ['./assets/icon1.png']);
+                            const aspect = step.aspect || 'landscape';
+                            const aspectClass = aspect === 'portrait' ? 'aspect-[3/4] max-w-[300px]' : 'aspect-[4/3] max-w-[400px]';
+
+                            if (isEven) {
+                                return `
+                                    <div class="reveal flex flex-col md:flex-row items-center gap-6 md:gap-8 relative z-10">
+                                        <div class="w-full md:w-1/2 md:text-right md:pr-4">
+                                            <span class="inline-block px-2.5 py-0.5 bg-secondary-container/50 text-on-secondary-container rounded-full font-label-sm text-[0.7rem] font-bold mb-2 tracking-wider">STEP 0${index + 1}</span>
+                                            <h3 class="korean-serif text-lg md:text-xl text-primary mb-2">${step.title || ''}</h3>
+                                            <p class="font-body-md text-sm md:text-base text-on-surface-variant leading-relaxed">${(step.desc || '').replace(/\n/g, '<br>')}</p>
+                                        </div>
+                                        <div class="w-full md:w-1/2">
+                                            <div class="relative ${aspectClass} rounded-xl overflow-hidden ambient-shadow mx-auto md:ml-4 md:mr-auto transition-all">
+                                                ${renderImages(images, step.title)}
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            `;
-                        }
-                    }).join('');
-                    targetRender.innerHTML = timelineLine + timelineContent;
+                                `;
+                            } else {
+                                return `
+                                    <div class="reveal flex flex-col md:flex-row-reverse items-center gap-6 md:gap-8 relative z-10">
+                                        <div class="w-full md:w-1/2 md:text-left md:pl-4">
+                                            <span class="inline-block px-2.5 py-0.5 bg-secondary-container/50 text-on-secondary-container rounded-full font-label-sm text-[0.7rem] font-bold mb-2 tracking-wider">STEP 0${index + 1}</span>
+                                            <h3 class="korean-serif text-lg md:text-xl text-primary mb-2">${step.title || ''}</h3>
+                                            <p class="font-body-md text-sm md:text-base text-on-surface-variant leading-relaxed">${(step.desc || '').replace(/\n/g, '<br>')}</p>
+                                        </div>
+                                        <div class="w-full md:w-1/2">
+                                            <div class="relative ${aspectClass} rounded-xl overflow-hidden ambient-shadow mx-auto md:mr-4 md:ml-auto transition-all">
+                                                ${renderImages(images, step.title)}
+                                            </div>
+                                        </div>
+                                    </div>
+                                `;
+                            }
+                        }).join('');
+                        targetRender.innerHTML = timelineLine + timelineContent;
+                    }
                 } catch (e) { targetRender.innerHTML = `<div class="post-body bg-surface p-6 rounded-xl">${post.content_growth}</div>`; }
 
                 const usageRender = document.getElementById('usageRender');
