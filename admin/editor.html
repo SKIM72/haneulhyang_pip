@@ -111,6 +111,10 @@
         let growthSteps = []; 
         let usageSteps = []; 
 
+        // 드래그 앤 드롭을 위한 상태 변수
+        let dragSrcStepIndex = null;
+        let dragSrcImgIndex = null;
+
         async function checkAuth() {
             const { data: { session } } = await supabaseClient.auth.getSession();
             if (!session) window.location.href = 'login.html';
@@ -142,9 +146,10 @@
                     imagesHTML = `<div class="grid grid-cols-2 gap-2 mb-2">`;
                     images.forEach((img, i) => {
                         imagesHTML += `
-                            <div class="relative aspect-square rounded-lg border border-outline-variant/30 overflow-hidden group/img bg-surface-variant">
-                                <img src="${img}" class="w-full h-full object-cover">
-                                <button onclick="removeGrowthImage(${index}, ${i})" class="absolute inset-0 bg-black/50 text-white flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity"><span class="material-symbols-outlined text-xl">delete</span></button>
+                            <div draggable="true" ondragstart="dragStart(event, ${index}, ${i})" ondragover="dragOver(event)" ondrop="drop(event, ${index}, ${i})" class="relative aspect-square rounded-lg border border-outline-variant/30 overflow-hidden group/img bg-surface-variant cursor-move">
+                                <div class="absolute top-1.5 left-1.5 bg-black/60 text-white text-[10px] font-bold px-1.5 py-0.5 rounded z-10 pointer-events-none">${i + 1}</div>
+                                <img src="${img}" class="w-full h-full object-cover pointer-events-none">
+                                <button onclick="removeGrowthImage(${index}, ${i})" class="absolute inset-0 bg-black/50 text-white flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity z-20"><span class="material-symbols-outlined text-xl">delete</span></button>
                             </div>
                         `;
                     });
@@ -185,6 +190,29 @@
         window.removeStep = function(index) { growthSteps.splice(index, 1); renderSteps(); }
         window.removeGrowthImage = function(stepIndex, imgIndex) { growthSteps[stepIndex].images.splice(imgIndex, 1); renderSteps(); }
 
+        // 드래그 앤 드롭 함수들
+        window.dragStart = function(e, stepIndex, imgIndex) {
+            dragSrcStepIndex = stepIndex;
+            dragSrcImgIndex = imgIndex;
+            e.dataTransfer.effectAllowed = 'move';
+        };
+
+        window.dragOver = function(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        };
+
+        window.drop = function(e, stepIndex, targetImgIndex) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (dragSrcStepIndex === stepIndex && dragSrcImgIndex !== targetImgIndex) {
+                const imagesArray = growthSteps[stepIndex].images;
+                const draggedItem = imagesArray.splice(dragSrcImgIndex, 1)[0];
+                imagesArray.splice(targetImgIndex, 0, draggedItem);
+                renderSteps();
+            }
+        };
+
         function renderUsage() {
             const container = document.getElementById('usageContainer');
             container.innerHTML = '';
@@ -224,20 +252,53 @@
                 if(growthSteps[index].images.length >= 4) return alert('최대 4장까지 업로드 가능합니다.');
             }
 
-            const input = document.createElement('input'); input.setAttribute('type', 'file'); input.setAttribute('accept', 'image/*'); input.click();
+            const input = document.createElement('input'); 
+            input.setAttribute('type', 'file'); 
+            input.setAttribute('accept', 'image/*'); 
+            if(type === 'growth') input.setAttribute('multiple', 'true'); // 다중 파일 선택 추가
+            
+            input.click();
+            
             input.onchange = async () => {
-                const file = input.files[0]; if (!file) return;
-                const fileExt = file.name.split('.').pop();
-                const fileName = `${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
-                const filePath = `post_images/${fileName}`;
-                try {
-                    const { error } = await supabaseClient.storage.from('images').upload(filePath, file);
-                    if (error) throw error;
-                    const { data } = supabaseClient.storage.from('images').getPublicUrl(filePath);
+                if (!input.files || input.files.length === 0) return;
+                
+                if (type === 'growth') {
+                    const maxAllowed = 4 - growthSteps[index].images.length;
+                    const filesToUpload = Array.from(input.files).slice(0, maxAllowed);
                     
-                    if(type === 'growth') { growthSteps[index].images.push(data.publicUrl); renderSteps(); }
-                    if(type === 'usage') { usageSteps[index].img = data.publicUrl; renderUsage(); }
-                } catch (error) { alert('사진 업로드 실패: ' + error.message); }
+                    if (input.files.length > maxAllowed) {
+                        alert(`최대 4장까지만 업로드 가능합니다. 초과된 사진은 제외하고 업로드됩니다.`);
+                    }
+
+                    for (const file of filesToUpload) {
+                        const fileExt = file.name.split('.').pop();
+                        const fileName = `${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
+                        const filePath = `post_images/${fileName}`;
+                        try {
+                            const { error } = await supabaseClient.storage.from('images').upload(filePath, file);
+                            if (error) throw error;
+                            const { data } = supabaseClient.storage.from('images').getPublicUrl(filePath);
+                            
+                            growthSteps[index].images.push(data.publicUrl);
+                            renderSteps(); // 업로드되는 순서대로 즉시 화면에 반영
+                        } catch (error) { 
+                            alert('사진 업로드 실패: ' + error.message); 
+                        }
+                    }
+                } else if (type === 'usage') {
+                    const file = input.files[0];
+                    const fileExt = file.name.split('.').pop();
+                    const fileName = `${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
+                    const filePath = `post_images/${fileName}`;
+                    try {
+                        const { error } = await supabaseClient.storage.from('images').upload(filePath, file);
+                        if (error) throw error;
+                        const { data } = supabaseClient.storage.from('images').getPublicUrl(filePath);
+                        
+                        usageSteps[index].img = data.publicUrl; 
+                        renderUsage();
+                    } catch (error) { alert('사진 업로드 실패: ' + error.message); }
+                }
             };
         }
 
