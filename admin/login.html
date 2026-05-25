@@ -14,6 +14,9 @@
         }
     </script>
     <style> body { font-family: 'Hanken Grotesk', sans-serif; } .headline-font { font-family: 'EB Garamond', serif; } .ambient-shadow { box-shadow: 0 24px 48px rgba(27, 61, 47, 0.06); } .hidden-view { display: none; } </style>
+    <link rel="manifest" href="../manifest.json">
+    <meta name="theme-color" content="#17341c">
+    <link rel="apple-touch-icon" href="../assets/icon1.png">
 </head>
 <body class="bg-background text-on-background min-h-screen flex items-center justify-center px-4">
     <div class="w-full max-w-md bg-surface p-8 rounded-2xl ambient-shadow border border-outline-variant/30">
@@ -185,6 +188,15 @@
             }
             btn.disabled = false; btn.innerText = "초기화 메일 보내기";
         });
+    </script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('../sw.js')
+                    .then(registration => console.log('ServiceWorker registration successful'))
+                    .catch(err => console.log('ServiceWorker registration failed: ', err));
+            });
+        }
     </script>
 </body>
 </html>

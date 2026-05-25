@@ -19,6 +19,9 @@
         .ambient-shadow { box-shadow: 0 12px 32px rgba(27, 61, 47, 0.05); }
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
     </style>
+    <link rel="manifest" href="../manifest.json">
+    <meta name="theme-color" content="#17341c">
+    <link rel="apple-touch-icon" href="../assets/icon1.png">
 </head>
 <body class="bg-background text-on-background min-h-screen flex flex-col pb-24">
 
@@ -368,6 +371,15 @@
         };
 
         document.addEventListener('DOMContentLoaded', async () => { await checkAuth(); loadPostData(); });
+    </script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('../sw.js')
+                    .then(registration => console.log('ServiceWorker registration successful'))
+                    .catch(err => console.log('ServiceWorker registration failed: ', err));
+            });
+        }
     </script>
 </body>
 </html>

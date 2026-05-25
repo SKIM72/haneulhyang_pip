@@ -70,6 +70,9 @@
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#17341c">
+    <link rel="apple-touch-icon" href="./assets/icon1.png">
 </head>
 <body class="bg-background text-on-background font-body-md antialiased overflow-x-hidden flex flex-col min-h-screen">
 
@@ -425,6 +428,15 @@
             } catch (error) { document.getElementById('errorState').classList.remove('hidden'); }
         }
         document.addEventListener('DOMContentLoaded', loadPostDetail);
+    </script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(registration => console.log('ServiceWorker registration successful'))
+                    .catch(err => console.log('ServiceWorker registration failed: ', err));
+            });
+        }
     </script>
 </body>
 </html>

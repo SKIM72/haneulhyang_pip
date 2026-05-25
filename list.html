@@ -59,6 +59,9 @@
         .reveal.active { opacity: 1; transform: translateY(0); }
         .korean-serif { font-family: 'EB Garamond', 'Noto Serif KR', serif !important; }
     </style>
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#17341c">
+    <link rel="apple-touch-icon" href="./assets/icon1.png">
 </head>
 <body class="bg-background text-on-background font-body-md antialiased overflow-x-hidden min-h-screen flex flex-col">
 
@@ -241,6 +244,15 @@
             } catch (error) { console.error(error); } finally { initScrollReveal(); }
         }
         document.addEventListener('DOMContentLoaded', loadMainContents);
+    </script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(registration => console.log('ServiceWorker registration successful'))
+                    .catch(err => console.log('ServiceWorker registration failed: ', err));
+            });
+        }
     </script>
 </body>
 </html>
