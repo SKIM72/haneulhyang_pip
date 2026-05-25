@@ -160,6 +160,118 @@
             }, 100);
         }
 
+        // 스크롤 속도와 Easing을 직접 제어하는 커스텀 애니메이션 함수
+        function smoothScrollTo(element, targetLeft, duration) {
+            element.dataset.isAnimating = 'true'; // 스크립트 애니메이션 상태 기록
+            const startLeft = element.scrollLeft;
+            const distance = targetLeft - startLeft;
+            let startTime = null;
+
+            // 스크롤이 넘어가는 동안 CSS snap 기능이 애니메이션을 방해하지 않도록 임시 해제
+            element.style.scrollSnapType = 'none';
+
+            function animation(currentTime) {
+                if (startTime === null) startTime = currentTime;
+                const timeElapsed = currentTime - startTime;
+                const progress = Math.min(timeElapsed / duration, 1);
+                
+                // easeInOutCubic 알고리즘: 처음엔 천천히, 중간에 빨라졌다, 끝에 다시 천천히 멈춤
+                const ease = progress < 0.5 
+                    ? 4 * progress * progress * progress 
+                    : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+
+                element.scrollLeft = startLeft + distance * ease;
+
+                if (timeElapsed < duration) {
+                    requestAnimationFrame(animation);
+                } else {
+                    // 애니메이션이 끝나면 사용자가 직접 넘길 때를 위해 snap 다시 켬
+                    element.style.scrollSnapType = '';
+                    setTimeout(() => { element.dataset.isAnimating = 'false'; }, 50); // 오차 방지 지연 해제
+                }
+            }
+            requestAnimationFrame(animation);
+        }
+
+        function initAutoSlide() {
+            const containers = document.querySelectorAll('.auto-slide-container');
+            containers.forEach(container => {
+                let slideTimeout;
+                let scrollDebounce;
+                let isUserPaused = false; 
+                const delay = 4000; // 머무는 시간 4초
+                const duration = 800; // 넘어가는 데 걸리는 시간 0.8초
+                
+                container.dataset.isAnimating = 'false'; // 초기 상태
+
+                const toggleBtn = container.parentElement.querySelector('.slide-toggle-btn');
+                const toggleIcon = toggleBtn ? toggleBtn.querySelector('.material-symbols-outlined') : null;
+
+                const runNextSlide = () => {
+                    if (isUserPaused) return;
+
+                    const currentLeft = Math.round(container.scrollLeft);
+                    const maxScroll = container.scrollWidth - container.clientWidth;
+                    
+                    // 끝에 도달했는지 확인 (여유값 5px)
+                    if (currentLeft >= maxScroll - 5) {
+                        smoothScrollTo(container, 0, duration);
+                    } else {
+                        // 현재 보고 있는 위치에서 정확히 다음 컨테이너 크기만큼 이동
+                        // 사용자가 수동으로 넘겨둔 상태라도 그 위치에서 다음 장으로 자연스럽게 이어짐
+                        const nextPos = currentLeft + container.clientWidth;
+                        smoothScrollTo(container, nextPos, duration);
+                    }
+                    
+                    // 다음 슬라이드 예약
+                    resetTimer();
+                };
+
+                const resetTimer = () => {
+                    clearTimeout(slideTimeout);
+                    if (!isUserPaused) {
+                        slideTimeout = setTimeout(runNextSlide, delay);
+                    }
+                };
+
+                // 초기 실행
+                resetTimer();
+
+                // 사용자가 수동으로 스크롤(모바일 스와이프 등)할 때 타이머 완벽 연동
+                container.addEventListener('scroll', () => {
+                    // 스크립트가 자동 넘김 중일 때 발생하는 scroll 이벤트는 무시
+                    if (container.dataset.isAnimating === 'true') return;
+                    
+                    // 사용자의 수동 스크롤이 감지되면 기존 카운트다운 즉시 취소
+                    clearTimeout(slideTimeout);
+                    clearTimeout(scrollDebounce);
+                    
+                    // 스크롤 조작이 완전히 멈추고 150ms 뒤에 다시 4초(4000ms) 카운트다운 시작
+                    scrollDebounce = setTimeout(() => {
+                        resetTimer();
+                    }, 150);
+                }, { passive: true });
+
+                // 재생/일시정지 토글 버튼 이벤트 (오직 이 버튼으로만 영구 정지/재생 제어 가능)
+                if (toggleBtn && toggleIcon) {
+                    toggleBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        isUserPaused = !isUserPaused;
+                        if (isUserPaused) {
+                            clearTimeout(slideTimeout);
+                            clearTimeout(scrollDebounce);
+                            toggleIcon.innerText = 'play_arrow'; // 재생 아이콘
+                            toggleBtn.setAttribute('aria-label', '자동 슬라이드 재생');
+                        } else {
+                            resetTimer(); // 즉시 4초 카운트 시작
+                            toggleIcon.innerText = 'pause'; // 일시정지 아이콘
+                            toggleBtn.setAttribute('aria-label', '자동 슬라이드 정지');
+                        }
+                    });
+                }
+            });
+        }
+
         async function loadPostDetail() {
             const postId = new URLSearchParams(window.location.search).get('id');
             if (!postId) { document.getElementById('loadingIndicator').classList.add('hidden'); document.getElementById('errorState').classList.remove('hidden'); return; }
@@ -183,7 +295,7 @@
                             return `<img alt="${title || ''}" class="w-full h-full object-cover" src="${images[0]}"/>`;
                         } else {
                             return `
-                                <div class="flex w-full h-full overflow-x-auto snap-x snap-mandatory scrollbar-hide">
+                                <div class="flex w-full h-full overflow-x-auto snap-x snap-mandatory scrollbar-hide auto-slide-container">
                                     ${images.map(img => `
                                         <div class="w-full h-full flex-shrink-0 snap-center relative">
                                             <img alt="${title || ''}" class="w-full h-full object-cover" src="${img}"/>
@@ -193,6 +305,9 @@
                                 <div class="absolute top-3 right-3 bg-black/40 text-white text-[0.65rem] font-bold px-2.5 py-1 rounded-full z-20 pointer-events-none backdrop-blur-sm shadow-sm flex items-center gap-1">
                                     <span class="material-symbols-outlined text-[12px]">swipe</span> 슬라이드
                                 </div>
+                                <button class="slide-toggle-btn absolute bottom-3 right-3 bg-black/40 hover:bg-black/60 text-white p-1.5 rounded-full z-20 backdrop-blur-sm shadow-sm flex items-center justify-center transition-all cursor-pointer" aria-label="자동 슬라이드 정지">
+                                    <span class="material-symbols-outlined text-[16px]">pause</span>
+                                </button>
                             `;
                         }
                     };
@@ -222,6 +337,9 @@
                             `;
                         }).join('');
                         targetRender.innerHTML = bentoContent;
+                        
+                        // 요소가 화면에 그려진 후 슬라이드 이벤트 부착
+                        initAutoSlide();
 
                     } else {
                         targetRender.className = "flex flex-col gap-8 md:gap-12 relative max-w-4xl mx-auto";
@@ -266,6 +384,9 @@
                             }
                         }).join('');
                         targetRender.innerHTML = timelineLine + timelineContent;
+                        
+                        // 요소가 화면에 그려진 후 슬라이드 이벤트 부착
+                        initAutoSlide();
                     }
                 } catch (e) { targetRender.innerHTML = `<div class="post-body bg-surface p-6 rounded-xl">${post.content_growth}</div>`; }
 
