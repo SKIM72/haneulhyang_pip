@@ -274,7 +274,7 @@
                 li.innerHTML = `
                     <div class="flex-1">
                         <div class="flex items-center gap-3 mb-1">${statusBadge}<span class="text-xs text-outline">${date}</span></div>
-                        <h2 class="text-lg font-semibold text-primary truncate max-w-xl">${post.title || '제목 없음'}</h2>
+                        <h2 class="text-lg font-semibold text-primary break-keep leading-snug">${post.title || '제목 없음'}</h2>
                     </div>
                     <div class="flex items-center gap-2 w-full sm:w-auto">
                         <button onclick="openQrModal('${post.id}', this)" data-title="${escapedTitle}" class="flex-1 sm:flex-none px-4 py-2 text-sm font-medium border border-primary/20 text-primary bg-primary/5 rounded-lg hover:bg-primary/10 transition-colors">QR 생성</button>
