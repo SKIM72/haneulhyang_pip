@@ -199,77 +199,46 @@
         function initAutoSlide() {
             const containers = document.querySelectorAll('.auto-slide-container');
             containers.forEach(container => {
-                let slideTimeout;
-                let scrollDebounce;
-                let isUserPaused = false; 
-                const delay = 5000; // 머무는 시간 5초
-                const duration = 800; // 넘어가는 데 걸리는 시간 0.8초
-                
-                container.dataset.isAnimating = 'false'; // 초기 상태
+                const parent = container.parentElement;
+                const dots = parent.querySelectorAll('.indicator-dot');
+                const prevBtn = parent.querySelector('.nav-prev');
+                const nextBtn = parent.querySelector('.nav-next');
+                const duration = 500; // 화살표 클릭 시 넘어가는 속도 (0.5초)
 
-                const toggleBtn = container.parentElement.querySelector('.slide-toggle-btn');
-                const toggleIcon = toggleBtn ? toggleBtn.querySelector('.material-symbols-outlined') : null;
+                // 1. 스크롤 연동 (모바일 스와이프 & 데스크탑 클릭 공통)
+                if (dots.length) {
+                    container.addEventListener('scroll', () => {
+                        const scrollLeft = container.scrollLeft;
+                        const slideWidth = container.clientWidth;
+                        const currentIndex = Math.round(scrollLeft / slideWidth);
 
-                const runNextSlide = () => {
-                    if (isUserPaused) return;
+                        dots.forEach((dot, index) => {
+                            if (index === currentIndex) {
+                                dot.classList.remove('bg-white/40');
+                                dot.classList.add('bg-white', 'scale-125');
+                            } else {
+                                dot.classList.remove('bg-white', 'scale-125');
+                                dot.classList.add('bg-white/40');
+                            }
+                        });
+                    }, { passive: true });
+                }
 
-                    const currentLeft = Math.round(container.scrollLeft);
-                    const maxScroll = container.scrollWidth - container.clientWidth;
-                    
-                    // 끝에 도달했는지 확인 (여유값 5px)
-                    if (currentLeft >= maxScroll - 5) {
-                        smoothScrollTo(container, 0, duration);
-                    } else {
-                        // 현재 보고 있는 위치에서 정확히 다음 컨테이너 크기만큼 이동
-                        // 사용자가 수동으로 넘겨둔 상태라도 그 위치에서 다음 장으로 자연스럽게 이어짐
-                        const nextPos = currentLeft + container.clientWidth;
-                        smoothScrollTo(container, nextPos, duration);
-                    }
-                    
-                    // 다음 슬라이드 예약
-                    resetTimer();
-                };
-
-                const resetTimer = () => {
-                    clearTimeout(slideTimeout);
-                    if (!isUserPaused) {
-                        slideTimeout = setTimeout(runNextSlide, delay);
-                    }
-                };
-
-                // 초기 실행
-                resetTimer();
-
-                // 사용자가 수동으로 스크롤(모바일 스와이프 등)할 때 타이머 완벽 연동
-                container.addEventListener('scroll', () => {
-                    // 스크립트가 자동 넘김 중일 때 발생하는 scroll 이벤트는 무시
-                    if (container.dataset.isAnimating === 'true') return;
-                    
-                    // 사용자의 수동 스크롤이 감지되면 기존 카운트다운 즉시 취소
-                    clearTimeout(slideTimeout);
-                    clearTimeout(scrollDebounce);
-                    
-                    // 스크롤 조작이 완전히 멈추고 150ms 뒤에 다시 4초(4000ms) 카운트다운 시작
-                    scrollDebounce = setTimeout(() => {
-                        resetTimer();
-                    }, 150);
-                }, { passive: true });
-
-                // 재생/일시정지 토글 버튼 이벤트 (오직 이 버튼으로만 영구 정지/재생 제어 가능)
-                if (toggleBtn && toggleIcon) {
-                    toggleBtn.addEventListener('click', (e) => {
+                // 2. 데스크탑 좌우 화살표 버튼 클릭 이벤트
+                if (prevBtn && nextBtn) {
+                    prevBtn.addEventListener('click', (e) => {
                         e.preventDefault();
-                        isUserPaused = !isUserPaused;
-                        if (isUserPaused) {
-                            clearTimeout(slideTimeout);
-                            clearTimeout(scrollDebounce);
-                            toggleIcon.innerText = 'play_arrow'; // 재생 아이콘
-                            toggleBtn.setAttribute('aria-label', '자동 슬라이드 재생');
-                        } else {
-                            resetTimer(); // 즉시 4초 카운트 시작
-                            toggleIcon.innerText = 'pause'; // 일시정지 아이콘
-                            toggleBtn.setAttribute('aria-label', '자동 슬라이드 정지');
-                        }
+                        const targetLeft = container.scrollLeft - container.clientWidth;
+                        // 0 미만으로 넘어가지 않도록 방지
+                        smoothScrollTo(container, Math.max(0, targetLeft), duration);
+                    });
+
+                    nextBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const targetLeft = container.scrollLeft + container.clientWidth;
+                        const maxScroll = container.scrollWidth - container.clientWidth;
+                        // 최대 스크롤 영역을 넘지 않도록 방지
+                        smoothScrollTo(container, Math.min(maxScroll, targetLeft), duration);
                     });
                 }
             });
@@ -298,19 +267,36 @@
                             return `<img alt="${title || ''}" class="w-full h-full object-cover" src="${images[0]}"/>`;
                         } else {
                             return `
-                                <div class="flex w-full h-full overflow-x-auto snap-x snap-mandatory scrollbar-hide auto-slide-container">
-                                    ${images.map(img => `
-                                        <div class="w-full h-full flex-shrink-0 snap-center relative">
-                                            <img alt="${title || ''}" class="w-full h-full object-cover" src="${img}"/>
-                                        </div>
-                                    `).join('')}
+                                <!-- 전체 영역을 감싸는 group 추가 (마우스 호버 시 버튼 표시용) -->
+                                <div class="w-full h-full relative group/slider">
+                                    <div class="flex w-full h-full overflow-x-auto snap-x snap-mandatory scrollbar-hide auto-slide-container">
+                                        ${images.map(img => `
+                                            <div class="w-full h-full flex-shrink-0 snap-center relative">
+                                                <img alt="${title || ''}" class="w-full h-full object-cover" src="${img}"/>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                    
+                                    <!-- 모바일용 스와이프 뱃지 (데스크탑에서는 숨김) -->
+                                    <div class="md:hidden absolute top-3 right-3 bg-black/40 text-white text-[0.65rem] font-bold px-2.5 py-1 rounded-full z-20 pointer-events-none backdrop-blur-sm shadow-sm flex items-center gap-1">
+                                        <span class="material-symbols-outlined text-[12px]">swipe</span> 슬라이드
+                                    </div>
+
+                                    <!-- 데스크탑용 좌우 넘김 버튼 (모바일에서는 숨김, 마우스 올릴 때만 표시) -->
+                                    <button class="nav-prev hidden md:flex absolute left-3 top-1/2 transform -translate-y-1/2 bg-black/40 hover:bg-black/70 text-white p-1.5 rounded-full z-20 backdrop-blur-sm transition-all duration-300 items-center justify-center opacity-0 group-hover/slider:opacity-100 cursor-pointer shadow-md" aria-label="이전 사진">
+                                        <span class="material-symbols-outlined text-xl">chevron_left</span>
+                                    </button>
+                                    <button class="nav-next hidden md:flex absolute right-3 top-1/2 transform -translate-y-1/2 bg-black/40 hover:bg-black/70 text-white p-1.5 rounded-full z-20 backdrop-blur-sm transition-all duration-300 items-center justify-center opacity-0 group-hover/slider:opacity-100 cursor-pointer shadow-md" aria-label="다음 사진">
+                                        <span class="material-symbols-outlined text-xl">chevron_right</span>
+                                    </button>
+
+                                    <!-- 하단 인디케이터(점) -->
+                                    <div class="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex gap-1.5 z-20 pointer-events-none">
+                                        ${images.map((_, i) => `
+                                            <div class="indicator-dot w-2 h-2 rounded-full transition-all duration-300 ${i === 0 ? 'bg-white scale-125' : 'bg-white/40'}"></div>
+                                        `).join('')}
+                                    </div>
                                 </div>
-                                <div class="absolute top-3 right-3 bg-black/40 text-white text-[0.65rem] font-bold px-2.5 py-1 rounded-full z-20 pointer-events-none backdrop-blur-sm shadow-sm flex items-center gap-1">
-                                    <span class="material-symbols-outlined text-[12px]">swipe</span> 슬라이드
-                                </div>
-                                <button class="slide-toggle-btn absolute bottom-3 right-3 bg-black/40 hover:bg-black/60 text-white p-1.5 rounded-full z-20 backdrop-blur-sm shadow-sm flex items-center justify-center transition-all cursor-pointer" aria-label="자동 슬라이드 정지">
-                                    <span class="material-symbols-outlined text-[16px]">pause</span>
-                                </button>
                             `;
                         }
                     };
