@@ -335,11 +335,15 @@
             }));
         }
 
-        // 로컬/스테이징에서 미리보더라도 QR 은 항상 운영 도메인을 가리키게 한다.
-        const PROD_ORIGIN = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
-            ? 'https://haneulhyang.shop'
-            : location.origin;
+        // QR 은 항상 운영 도메인을 가리켜야 한다.
+        // (file:// 로 열거나 localhost 에서 미리봐도 haneulhyang.shop 로 고정)
+        const PROD_ORIGIN = /^https?:$/.test(location.protocol)
+            && !['localhost', '127.0.0.1', ''].includes(location.hostname)
+            ? location.origin
+            : 'https://haneulhyang.shop';
 
+        // qrcodejs 는 그린 직후(비동기로) 내부 <canvas> 를 display:none 처리하고 <img> 를 보여준다.
+        // 그 canvas 를 그대로 쓰면 나중에 숨겨지므로, 새 canvas 에 즉시 복사해서 반환한다.
         function renderQrCanvas(text, size) {
             const holder = document.createElement('div');
             new QRCode(holder, {
@@ -347,7 +351,15 @@
                 colorDark: "#17341c", colorLight: "#ffffff",
                 correctLevel: QRCode.CorrectLevel.H
             });
-            return holder.querySelector('canvas');
+            const src = holder.querySelector('canvas');
+            if (src) {
+                const out = document.createElement('canvas');
+                out.width = src.width;
+                out.height = src.height;
+                out.getContext('2d').drawImage(src, 0, 0);
+                return out;
+            }
+            return holder.querySelector('img'); // 캔버스 미지원 환경 폴백
         }
 
         window.openQrModal = function(postId, btnElement) {
@@ -361,13 +373,19 @@
             const container = document.getElementById('qrCodeContainer');
             container.innerHTML = '';
             const preview = renderQrCanvas(postUrl, 220);
-            if (preview) { preview.style.width = '220px'; preview.style.height = '220px'; container.appendChild(preview); }
+            if (preview) {
+                preview.style.width = '220px';
+                preview.style.height = '220px';
+                container.appendChild(preview);
+            } else {
+                container.textContent = 'QR 생성 실패 — 새로고침 후 다시 시도해 주세요.';
+            }
 
             const safeTitle = (postTitle || 'product').replace(/[^a-zA-Z0-9가-힣]/g, '_').substring(0, 20) || 'product';
 
             document.getElementById('btnDownloadQr').onclick = function() {
                 const hi = renderQrCanvas(postUrl, 1024);
-                if (!hi) return;
+                if (!hi || !hi.toDataURL) return alert('이미지를 만들지 못했습니다.');
                 const link = document.createElement('a');
                 link.download = `하늘향_QR_${safeTitle}.png`;
                 link.href = hi.toDataURL("image/png");
