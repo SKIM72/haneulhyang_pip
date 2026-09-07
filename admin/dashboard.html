@@ -4,31 +4,25 @@
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>하늘향 - 관리자 대시보드</title>
+    <meta name="robots" content="noindex, nofollow">
     <link rel="icon" type="image/png" href="../assets/favicon.png">
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard-dynamic-subset.min.css"/>
+    <link rel="stylesheet" href="../assets/tailwind.css">
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
-    <script id="tailwind-config">
-        tailwind.config = {
-            theme: { extend: { colors: { "primary": "#17341c", "background": "#fcf9f8", "surface": "#ffffff", "on-background": "#1c1b1b", "outline": "#737971", "outline-variant": "#c2c8bf" }, fontFamily: { "headline": ["EB Garamond"], "body": ["Hanken Grotesk"] } } }
-        }
-    </script>
-    <style> 
-        body { font-family: 'Hanken Grotesk', sans-serif; } 
-        .ambient-shadow { box-shadow: 0 12px 32px rgba(27, 61, 47, 0.05); } 
-        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; } 
-    </style>
     <link rel="manifest" href="../manifest.json">
     <meta name="theme-color" content="#17341c">
     <link rel="apple-touch-icon" href="../assets/icon1.png">
 </head>
 <body class="bg-background text-on-background min-h-screen flex flex-col">
 
-    <header class="bg-surface border-b border-outline-variant/30 sticky top-0 z-50">
+    <header class="bg-surface-container-lowest border-b border-outline-variant/30 sticky top-0 z-50">
         <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
             <div class="flex items-center gap-3">
                 <img src="../assets/icon1.png" alt="하늘향 로고" class="w-10 h-10 object-contain">
@@ -67,7 +61,7 @@
             </button>
         </div>
 
-        <div class="bg-surface p-4 md:p-5 rounded-2xl border border-outline-variant/30 mb-8 flex flex-col md:flex-row gap-4 ambient-shadow">
+        <div class="bg-surface-container-lowest p-4 md:p-5 rounded-2xl border border-outline-variant/30 mb-8 flex flex-col md:flex-row gap-4 ambient-shadow">
             <div class="flex-1">
                 <label class="block text-xs font-bold text-primary mb-1.5 ml-1">포스트 검색</label>
                 <input type="text" id="searchTitle" placeholder="이름으로 검색..." class="w-full px-4 py-2.5 text-sm bg-background border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all">
@@ -90,7 +84,7 @@
             </div>
         </div>
 
-        <div class="bg-surface rounded-2xl border border-outline-variant/30 ambient-shadow overflow-hidden">
+        <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/30 ambient-shadow overflow-hidden">
             <div id="loadingIndicator" class="p-8 text-center text-outline">데이터를 불러오는 중입니다...</div>
             <ul id="postsList" class="divide-y divide-outline-variant/30 hidden"></ul>
             <div id="emptyState" class="hidden p-12 text-center flex flex-col items-center">
@@ -102,7 +96,7 @@
     </main>
 
     <div id="accountModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-        <div class="bg-surface w-full max-w-2xl rounded-2xl shadow-2xl border border-outline-variant/30 flex flex-col max-h-[80vh]">
+        <div class="bg-surface-container-lowest w-full max-w-2xl rounded-2xl shadow-2xl border border-outline-variant/30 flex flex-col max-h-[80vh]">
             <div class="p-5 border-b border-outline-variant/30 flex justify-between items-center bg-background rounded-t-2xl">
                 <h2 class="text-lg font-bold text-primary flex items-center gap-2"><span class="material-symbols-outlined">group</span> 회원 가입 승인 관리</h2>
                 <button onclick="closeAccountModal()" class="text-outline hover:text-on-background transition-colors"><span class="material-symbols-outlined">close</span></button>
@@ -116,7 +110,7 @@
     </div>
 
     <div id="qrModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-        <div class="bg-surface w-full max-w-sm rounded-2xl shadow-2xl border border-outline-variant/30 flex flex-col">
+        <div class="bg-surface-container-lowest w-full max-w-sm rounded-2xl shadow-2xl border border-outline-variant/30 flex flex-col">
             <div class="p-5 border-b border-outline-variant/30 flex justify-between items-center bg-background rounded-t-2xl">
                 <h2 class="text-lg font-bold text-primary flex items-center gap-2"><span class="material-symbols-outlined">qr_code_2</span> 제품 QR 코드</h2>
                 <button onclick="closeQrModal()" class="text-outline hover:text-on-background transition-colors"><span class="material-symbols-outlined">close</span></button>
@@ -132,28 +126,46 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../assets/app.js"></script>
     <script>
-        const SUPABASE_URL = "https://eyoahkbqfxcisvmkvikp.supabase.co";
-        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV5b2Foa2JxZnhjaXN2bWt2aWtwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk0NDAzODUsImV4cCI6MjA5NTAxNjM4NX0.-JgH5ACzfq-d96VXEZlXovXx0w_uR3gJiwonaushah8";
-        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        
+        const supabaseClient = HY.supa();
+
         const SUPER_ADMIN_EMAIL = 'eowert72@gmail.com';
 
+        // 세션 + 관리자 승인 여부를 모두 확인한다.
+        // (승인 검사는 로그인 화면뿐 아니라 모든 관리자 페이지에서 반복 수행해야 한다.)
         async function checkAuth() {
             const { data: { session } } = await supabaseClient.auth.getSession();
             if (!session) {
                 window.location.href = 'login.html';
-                return;
+                return null;
             }
-            
+
             const userEmail = session.user.email;
+
+            if (userEmail !== SUPER_ADMIN_EMAIL) {
+                const { data: profile, error } = await supabaseClient
+                    .from('profiles')
+                    .select('is_approved')
+                    .eq('id', session.user.id)
+                    .single();
+
+                if (error || !profile || profile.is_approved !== true) {
+                    await supabaseClient.auth.signOut();
+                    alert('관리자 승인이 완료되지 않은 계정입니다. 승인 후 다시 로그인해 주세요.');
+                    window.location.href = 'login.html';
+                    return null;
+                }
+            }
+
             document.getElementById('currentUserEmail').innerText = userEmail;
 
             if (userEmail === SUPER_ADMIN_EMAIL) {
                 document.getElementById('btnManageAccounts').classList.remove('hidden');
                 document.getElementById('btnManageAccounts').classList.add('flex');
             }
-            
+
             return session;
         }
 
@@ -194,7 +206,7 @@
                 listEl.innerHTML += `
                     <li class="p-4 hover:bg-gray-50 flex items-center justify-between gap-4">
                         <div class="flex flex-col sm:flex-row sm:items-center gap-2">
-                            <span class="font-medium text-sm text-on-background">${profile.email}</span>
+                            <span class="font-medium text-sm text-on-background">${HY.esc(profile.email)}</span>
                             ${statusBadge}
                         </div>
                         <div>${toggleBtn}</div>
@@ -267,17 +279,17 @@
                 
                 const date = new Date(post.created_at).toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' });
                 
-                const escapedTitle = (post.title || '제목 없음').replace(/"/g, '&quot;');
+                const safeTitle = HY.esc(post.title || '제목 없음');
 
                 const li = document.createElement('li');
                 li.className = "p-5 sm:p-6 hover:bg-gray-50 transition-colors flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between";
                 li.innerHTML = `
                     <div class="flex-1">
                         <div class="flex items-center gap-3 mb-1">${statusBadge}<span class="text-xs text-outline">${date}</span></div>
-                        <h2 class="text-lg font-semibold text-primary break-keep leading-snug">${post.title || '제목 없음'}</h2>
+                        <h2 class="text-lg font-semibold text-primary break-keep leading-snug">${safeTitle}</h2>
                     </div>
                     <div class="flex items-center gap-2 w-full sm:w-auto">
-                        <button onclick="openQrModal('${post.id}', this)" data-title="${escapedTitle}" class="flex-1 sm:flex-none px-4 py-2 text-sm font-medium border border-primary/20 text-primary bg-primary/5 rounded-lg hover:bg-primary/10 transition-colors">QR 생성</button>
+                        <button onclick="openQrModal('${post.id}', this)" data-title="${safeTitle}" class="flex-1 sm:flex-none px-4 py-2 text-sm font-medium border border-primary/20 text-primary bg-primary/5 rounded-lg hover:bg-primary/10 transition-colors">QR 생성</button>
                         <button onclick="editPost('${post.id}')" class="flex-1 sm:flex-none px-4 py-2 text-sm font-medium border border-outline-variant text-primary rounded-lg hover:bg-white transition-colors">수정</button>
                         <button onclick="deletePost('${post.id}')" class="flex-1 sm:flex-none px-4 py-2 text-sm font-medium border border-red-200 text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors">삭제</button>
                     </div>
@@ -345,8 +357,8 @@
         };
 
         document.addEventListener('DOMContentLoaded', async () => {
-            await checkAuth();
-            loadPosts();
+            const session = await checkAuth();
+            if (session) loadPosts();
         });
     </script>
     <script>

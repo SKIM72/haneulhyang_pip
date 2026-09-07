@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>하늘향 - 오프라인</title>
+    <link rel="icon" type="image/png" href="./assets/favicon.png">
+    <meta name="theme-color" content="#17341c">
+    <script>
+        (function () {
+            try {
+                var m = localStorage.getItem('hy-theme') || 'system';
+                var d = m === 'dark' || (m === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+                document.documentElement.classList.toggle('dark', d);
+            } catch (e) {}
+        })();
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./assets/tailwind.css">
+</head>
+<body class="bg-background text-on-background min-h-screen flex items-center justify-center px-6">
+    <div class="text-center max-w-sm">
+        <div class="h-16 w-16 mx-auto mb-6 rounded-2xl overflow-hidden bg-white shadow-md border border-outline-variant/20">
+            <img src="./assets/icon1.png" alt="하늘향" class="h-full w-full object-cover p-1">
+        </div>
+        <h1 class="korean-serif text-2xl text-primary mb-3">인터넷 연결이 없습니다</h1>
+        <p class="text-sm text-on-surface-variant leading-relaxed mb-6">
+            네트워크에 다시 연결되면 하늘향의 최신 소식을 확인하실 수 있습니다.
+        </p>
+        <button onclick="location.reload()" class="px-6 py-3 bg-primary text-on-primary rounded-xl text-sm font-bold tracking-wide hover:opacity-90 transition-opacity">
+            다시 시도
+        </button>
+    </div>
+</body>
+</html>

@@ -1,49 +1,56 @@
-const CACHE_NAME = 'haneulhyang-pwa-v1';
-const urlsToCache = [
+const CACHE_NAME = 'haneulhyang-pwa-v3';
+const CORE_ASSETS = [
   '/',
   '/index.html',
   '/list.html',
   '/detail.html',
+  '/offline.html',
+  '/manifest.json',
+  '/assets/tailwind.css',
+  '/assets/app.js',
   '/assets/favicon.png',
   '/assets/icon1.png',
   '/assets/band.png',
-  '/assets/band_hover.png'
+  '/assets/band_hover.png',
 ];
 
-// 서비스 워커 설치 및 캐시 저장
-self.addEventListener('install', event => {
+self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(urlsToCache))
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(CORE_ASSETS)).then(() => self.skipWaiting())
   );
 });
 
-// 활성화 및 구버전 캐시 삭제
-self.addEventListener('activate', event => {
+self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.map(cacheName => {
-          if (cacheName !== CACHE_NAME) {
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    })
+    caches.keys()
+      .then((names) => Promise.all(names.filter((n) => n !== CACHE_NAME).map((n) => caches.delete(n))))
+      .then(() => self.clients.claim())
   );
 });
 
-// 네트워크 우선 (Network First) 전략 - 동적 데이터(Supabase) 보호
-self.addEventListener('fetch', event => {
-  if (event.request.method !== 'GET') return;
-  
+// 네트워크 우선. 실패 시 캐시, 그래도 없으면(페이지 이동일 때) 오프라인 안내.
+self.addEventListener('fetch', (event) => {
+  const req = event.request;
+  if (req.method !== 'GET') return;
+
+  const url = new URL(req.url);
+  // 동적 데이터(Supabase API)는 서비스워커가 관여하지 않는다.
+  if (url.origin !== self.location.origin) return;
+
   event.respondWith(
-    fetch(event.request)
-      .then(response => {
+    fetch(req)
+      .then((response) => {
+        if (response && response.status === 200 && response.type === 'basic') {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(req, copy));
+        }
         return response;
       })
-      .catch(() => {
-        return caches.match(event.request);
+      .catch(async () => {
+        const cached = await caches.match(req);
+        if (cached) return cached;
+        if (req.mode === 'navigate') return caches.match('/offline.html');
+        return Response.error();
       })
   );
 });

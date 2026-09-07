@@ -4,64 +4,39 @@
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>하늘향 - 전체 게시글</title>
+    <meta name="description" content="하늘향의 모든 성장 일지와 제품 이력 기록을 모아봅니다."/>
+    <link rel="canonical" href="https://haneulhyang.shop/list.html"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:site_name" content="하늘향"/>
+    <meta property="og:title" content="하늘향 - 전체 게시글"/>
+    <meta property="og:description" content="하늘향의 모든 성장 일지와 제품 이력 기록."/>
+    <meta property="og:url" content="https://haneulhyang.shop/list.html"/>
+    <meta property="og:image" content="https://haneulhyang.shop/assets/icon1.png"/>
+    <meta name="twitter:card" content="summary"/>
+
     <link rel="icon" type="image/png" href="./assets/favicon.png">
-
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    "colors": {
-                        "primary": "#17341c", "on-secondary-fixed": "#1c1c19", "inverse-surface": "#313030", "surface-tint": "#47664a",
-                        "on-background": "#1c1b1b", "on-surface": "#1c1b1b", "on-primary-container": "#98ba99", "surface-container": "#f0eded",
-                        "error-container": "#ffdad6", "inverse-primary": "#adcfad", "inverse-on-surface": "#f3f0ef", "surface-dim": "#dcd9d9",
-                        "on-secondary-fixed-variant": "#474743", "on-primary-fixed-variant": "#2f4e33", "secondary": "#5f5e5b",
-                        "surface-container-low": "#f6f3f2", "background": "#fcf9f8", "on-primary-fixed": "#03210b", "surface-container-high": "#eae7e7",
-                        "secondary-container": "#e5e2dd", "tertiary": "#41271f", "on-secondary": "#ffffff", "surface-container-lowest": "#ffffff",
-                        "outline": "#737971", "error": "#ba1a1a", "tertiary-fixed": "#ffdbd0", "outline-variant": "#c2c8bf",
-                        "on-error-container": "#93000a", "secondary-fixed": "#e5e2dd", "surface": "#fcf9f8", "on-error": "#ffffff",
-                        "tertiary-container": "#5a3d34", "on-tertiary-fixed": "#2c160e", "secondary-fixed-dim": "#c9c6c2",
-                        "on-surface-variant": "#424841", "on-tertiary-container": "#d0a99d", "surface-variant": "#e5e2e1",
-                        "primary-container": "#2d4b31", "tertiary-fixed-dim": "#e7bdb1", "on-secondary-container": "#656461",
-                        "primary-fixed": "#c8ecc8", "primary-fixed-dim": "#adcfad", "on-tertiary-fixed-variant": "#5d4037",
-                        "on-tertiary": "#ffffff", "on-primary": "#ffffff", "surface-container-highest": "#e5e2e1", "surface-bright": "#fcf9f8"
-                    },
-                    "borderRadius": { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem", "2xl": "1rem" },
-                    "spacing": { "margin-mobile": "20px", "margin-desktop": "64px", "gutter": "24px", "base": "8px", "container-max": "1200px" },
-                    "fontFamily": {
-                        "headline-lg": ["EB Garamond", "serif"], 
-                        "label-lg": ["Hanken Grotesk", "sans-serif"], 
-                        "body-lg": ["Hanken Grotesk", "sans-serif"],
-                        "headline-lg-mobile": ["EB Garamond", "serif"], 
-                        "label-sm": ["Hanken Grotesk", "sans-serif"], 
-                        "headline-md": ["EB Garamond", "serif"],
-                        "display-lg": ["EB Garamond", "serif"], 
-                        "body-md": ["Hanken Grotesk", "sans-serif"]
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        body { font-family: 'Hanken Grotesk', sans-serif; }
-        .headline-font { font-family: 'EB Garamond', serif; }
-        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-        .ambient-shadow { box-shadow: 0 24px 48px rgba(27, 61, 47, 0.08); }
-        .reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.5, 0, 0, 1); }
-        .reveal.active { opacity: 1; transform: translateY(0); }
-        .korean-serif { font-family: 'EB Garamond', 'Noto Serif KR', serif !important; }
-    </style>
     <link rel="manifest" href="./manifest.json">
     <meta name="theme-color" content="#17341c">
     <link rel="apple-touch-icon" href="./assets/icon1.png">
+
+    <script>
+        (function () {
+            try {
+                var m = localStorage.getItem('hy-theme') || 'system';
+                var d = m === 'dark' || (m === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+                document.documentElement.classList.toggle('dark', d);
+            } catch (e) {}
+        })();
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard-dynamic-subset.min.css"/>
+
+    <link rel="stylesheet" href="./assets/tailwind.css">
 </head>
 <body class="bg-background text-on-background font-body-md antialiased overflow-x-hidden min-h-screen flex flex-col">
 
@@ -69,110 +44,110 @@
         <div class="relative flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto w-full">
             <a class="flex items-center gap-3 z-10 hover:opacity-90 transition-opacity" href="index.html">
                 <div class="h-12 w-12 md:h-14 md:w-14 rounded-2xl overflow-hidden bg-white shadow-sm border border-outline-variant/20 shrink-0">
-                    <img alt="하늘향 로고" class="h-full w-full object-cover p-1" src="./assets/icon1.png"/>
+                    <img alt="하늘향 로고" class="h-full w-full object-cover p-1" src="./assets/icon1.png" width="56" height="56"/>
                 </div>
                 <span class="headline-font text-base md:text-lg font-bold text-primary tracking-wider">하늘향</span>
             </a>
-            <div class="absolute inset-x-0 flex justify-center items-center pointer-events-none"></div>
-            
-            <div class="flex justify-end items-center z-10">
+            <div class="flex justify-end items-center gap-1 z-10">
+                <button id="themeToggle" type="button" class="w-9 h-9 md:w-11 md:h-11 flex items-center justify-center rounded-full text-primary hover:bg-primary/10 transition-colors" aria-label="테마 전환">
+                    <span class="material-symbols-outlined text-xl md:text-2xl">brightness_auto</span>
+                </button>
                 <a href="https://www.band.us/band/67603330/intro" target="_blank" rel="noopener noreferrer" class="group block w-9 h-9 md:w-11 md:h-11 transition-transform duration-300 hover:scale-110" title="하늘향 밴드 바로가기">
                     <img src="./assets/band.png" alt="네이버 밴드" class="w-full h-full object-contain block group-hover:hidden">
                     <img src="./assets/band_hover.png" alt="네이버 밴드" class="w-full h-full object-contain hidden group-hover:block">
                 </a>
             </div>
-            
         </div>
     </nav>
 
     <main class="flex-1 pt-[100px] md:pt-[140px]">
-        
+
         <section class="px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto reveal">
             <div class="text-center mb-10">
-                <h2 class="headline-font text-2xl md:text-3xl text-primary font-medium mb-2">전체 게시글 보기</h2>
+                <h1 class="headline-font text-2xl md:text-3xl text-primary font-medium mb-2">전체 게시글 보기</h1>
                 <div class="w-12 h-0.5 bg-primary/20 mx-auto mt-4"></div>
             </div>
 
-            <div class="bg-surface p-4 md:p-5 rounded-2xl border border-outline-variant/30 mb-10 flex flex-col md:flex-row gap-4 ambient-shadow">
+            <form id="searchForm" class="bg-surface-container-lowest p-4 md:p-5 rounded-2xl border border-outline-variant/30 mb-10 flex flex-col md:flex-row gap-4 ambient-shadow">
                 <div class="flex-1">
-                    <label class="block text-xs font-bold text-primary mb-1.5 ml-1">포스트 검색</label>
+                    <label for="searchTitle" class="block text-xs font-bold text-primary mb-1.5 ml-1">포스트 검색</label>
                     <input type="text" id="searchTitle" placeholder="이름으로 검색..." class="w-full px-4 py-2.5 text-sm bg-background border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all">
                 </div>
                 <div class="w-full md:w-48">
-                    <label class="block text-xs font-bold text-primary mb-1.5 ml-1">작성일자</label>
+                    <label for="searchDate" class="block text-xs font-bold text-primary mb-1.5 ml-1">작성일자</label>
                     <input type="date" id="searchDate" class="w-full px-4 py-2.5 text-sm bg-background border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all text-outline">
                 </div>
                 <div class="w-full md:w-40">
-                    <label class="block text-xs font-bold text-primary mb-1.5 ml-1">정렬 순서</label>
+                    <label for="sortOrder" class="block text-xs font-bold text-primary mb-1.5 ml-1">정렬 순서</label>
                     <select id="sortOrder" class="w-full px-4 py-2.5 text-sm bg-background border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all">
                         <option value="desc">최신순</option>
                         <option value="asc">과거순</option>
                     </select>
                 </div>
                 <div class="w-full md:w-auto flex items-end">
-                    <button onclick="loadMainContents()" class="w-full md:w-auto bg-primary text-white px-6 py-2.5 rounded-xl text-sm font-bold tracking-wide hover:opacity-90 active:scale-95 transition-all h-[42px] flex items-center justify-center gap-1">
+                    <button type="submit" class="w-full md:w-auto bg-primary text-on-primary px-6 py-2.5 rounded-xl text-sm font-bold tracking-wide hover:opacity-90 active:scale-95 transition-all h-[42px] flex items-center justify-center gap-1">
                         <span class="material-symbols-outlined text-base">search</span> 검색
                     </button>
                 </div>
-            </div>
+            </form>
 
             <div id="storyLoading" class="text-center py-12 text-on-surface-variant">게시글을 불러오는 중입니다...</div>
-            
+
             <div id="blogListContainer" class="flex flex-col gap-8 hidden mb-16"></div>
-            
+
+            <div id="storyError" class="hidden text-center py-16 text-on-surface-variant bg-surface-container-low rounded-xl mb-16">
+                <span class="material-symbols-outlined text-4xl mb-2 opacity-50 block">cloud_off</span>
+                게시글을 불러오지 못했습니다.
+                <div class="mt-4"><button type="button" onclick="loadMainContents()" class="px-5 py-2 text-sm font-bold border border-outline-variant text-primary rounded-xl hover:bg-primary hover:text-on-primary transition-colors">다시 시도</button></div>
+            </div>
+
             <div id="storyEmpty" class="hidden text-center py-16 text-on-surface-variant bg-surface-container-low rounded-xl mb-16">
                 <span class="material-symbols-outlined text-4xl mb-2 opacity-50 block">search_off</span>
                 조건에 맞는 게시글이 없습니다.
             </div>
         </section>
-        
+
     </main>
 
     <footer class="w-full py-16 px-margin-mobile md:px-margin-desktop flex flex-col items-center text-center gap-8 bg-surface-container-lowest border-t border-surface-container-low mt-auto">
         <div class="flex flex-col items-center gap-6">
-            <a class="block h-20 w-20 rounded-2xl overflow-hidden bg-white shadow-md border border-outline-variant/20" href="#">
-                <img alt="하늘향 로고" class="h-full w-full object-cover p-1" src="./assets/icon1.png"/>
+            <a class="block h-20 w-20 rounded-2xl overflow-hidden bg-white shadow-md border border-outline-variant/20" href="index.html">
+                <img alt="하늘향 로고" class="h-full w-full object-cover p-1" src="./assets/icon1.png" width="80" height="80"/>
             </a>
-            <span class="font-body-md text-body-md text-secondary">© 2026 하늘향 PREMIUM WELLNESS. ALL RIGHTS RESERVED.</span>
+            <span class="font-body-md text-body-md text-secondary">© <span id="footerYear">2026</span> 하늘향 PREMIUM WELLNESS. ALL RIGHTS RESERVED.</span>
         </div>
         <ul class="flex flex-col md:flex-row gap-6 font-body-md text-body-md text-on-surface-variant justify-center">
             <li><a class="hover:text-primary transition-colors" href="admin/login.html">관리자 시스템 접속</a></li>
         </ul>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="./assets/app.js"></script>
     <script>
-        const SUPABASE_URL = "https://eyoahkbqfxcisvmkvikp.supabase.co";
-        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV5b2Foa2JxZnhjaXN2bWt2aWtwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk0NDAzODUsImV4cCI6MjA5NTAxNjM4NX0.-JgH5ACzfq-d96VXEZlXovXx0w_uR3gJiwonaushah8";
-        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-        function initScrollReveal() {
-            setTimeout(() => {
-                const reveals = document.querySelectorAll(".reveal");
-                const observer = new IntersectionObserver((entries) => {
-                    entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('active'); });
-                }, { threshold: 0.1 });
-                reveals.forEach(el => observer.observe(el));
-            }, 100);
-        }
+        document.getElementById('footerYear').textContent = new Date().getFullYear();
+        HY.registerSW('./sw.js');
 
         async function loadMainContents() {
             const loadingIndicator = document.getElementById('storyLoading');
             const listContainer = document.getElementById('blogListContainer');
             const emptyState = document.getElementById('storyEmpty');
+            const errorState = document.getElementById('storyError');
 
             loadingIndicator.classList.remove('hidden');
             listContainer.classList.add('hidden');
             emptyState.classList.add('hidden');
+            errorState.classList.add('hidden');
 
             const searchTitle = document.getElementById('searchTitle').value.trim();
             const searchDate = document.getElementById('searchDate').value;
             const sortOrder = document.getElementById('sortOrder').value;
 
             try {
-                let query = supabaseClient.from('posts').select('*').eq('status', 'published');
-                
-                if (sortOrder === 'asc') query = query.order('created_at', { ascending: true });
-                else query = query.order('created_at', { ascending: false });
+                let query = HY.supa()
+                    .from('posts')
+                    .select('id, title, content_growth, thumbnail_url, created_at')
+                    .eq('status', 'published')
+                    .order('created_at', { ascending: sortOrder === 'asc' });
 
                 if (searchTitle) query = query.ilike('title', `%${searchTitle}%`);
 
@@ -180,79 +155,77 @@
                 if (error) throw error;
 
                 let filteredPosts = posts || [];
-
                 if (searchDate) {
                     filteredPosts = filteredPosts.filter(post => {
-                        const dateObj = new Date(post.created_at);
-                        const year = dateObj.getFullYear();
-                        const month = String(dateObj.getMonth() + 1).padStart(2, '0');
-                        const day = String(dateObj.getDate()).padStart(2, '0');
-                        const formattedLocal = `${year}-${month}-${day}`;
-                        return formattedLocal === searchDate;
+                        const d = new Date(post.created_at);
+                        const local = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+                        return local === searchDate;
                     });
                 }
 
                 loadingIndicator.classList.add('hidden');
 
-                if (filteredPosts.length === 0) { 
-                    emptyState.classList.remove('hidden'); 
-                    return; 
+                if (filteredPosts.length === 0) {
+                    emptyState.classList.remove('hidden');
+                    return;
                 }
 
                 listContainer.classList.remove('hidden');
-                listContainer.innerHTML = '';
+                listContainer.innerHTML = filteredPosts.map(renderPostRow).join('');
+            } catch (error) {
+                console.error(error);
+                loadingIndicator.classList.add('hidden');
+                errorState.classList.remove('hidden');
+            } finally {
+                HY.initReveal();
+            }
+        }
 
-                filteredPosts.forEach(post => {
-                    let firstImg = './assets/icon1.png'; 
-                    let plainText = '';
-                    try {
-                        const growthData = JSON.parse(post.content_growth);
-                        if(growthData.steps && growthData.steps.length > 0) {
-                            if(growthData.steps[0].img) firstImg = growthData.steps[0].img;
-                            plainText = growthData.steps[0].desc || '';
-                        }
-                    } catch(e) {
-                        const tempDiv = document.createElement('div'); tempDiv.innerHTML = post.content_growth || '';
-                        const img = tempDiv.querySelector('img'); if(img) firstImg = img.src;
-                        plainText = tempDiv.innerText || '';
-                    }
+        function renderPostRow(post) {
+            let firstImg = post.thumbnail_url || './assets/icon1.png';
+            let plainText = '';
+            try {
+                const growthData = JSON.parse(post.content_growth);
+                if (growthData.steps && growthData.steps.length > 0) {
+                    const s0 = growthData.steps[0];
+                    if (s0.images && s0.images.length) firstImg = s0.images[0];
+                    else if (s0.img) firstImg = s0.img;
+                    plainText = s0.desc || '';
+                }
+            } catch (e) {
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = post.content_growth || '';
+                const img = tempDiv.querySelector('img');
+                if (img) firstImg = img.src;
+                plainText = tempDiv.innerText || '';
+            }
+            if (plainText.length > 120) plainText = plainText.substring(0, 120) + '...';
 
-                    if(plainText.length > 120) plainText = plainText.substring(0, 120) + '...';
-                    const dateOpts = { year: 'numeric', month: 'long', day: 'numeric' };
-                    const dateStr = new Date(post.created_at).toLocaleDateString('ko-KR', dateOpts);
-
-                    const postHTML = `
-                        <div class="reveal flex flex-col-reverse md:flex-row gap-6 md:gap-8 py-8 border-b border-outline-variant/30 cursor-pointer group hover:bg-surface-container-low/50 px-4 md:px-6 rounded-2xl transition-colors" onclick="window.location.href='detail.html?id=${post.id}'">
-                            <div class="flex-1 flex flex-col justify-center">
-                                <div class="flex items-center gap-2.5 mb-3">
-                                    <div class="w-8 h-8 rounded-full overflow-hidden bg-white border border-outline-variant/30 shrink-0">
-                                        <img src="./assets/icon1.png" class="w-full h-full object-cover p-0.5">
-                                    </div>
-                                    <span class="font-bold text-sm text-primary">하늘향</span>
-                                    <span class="text-xs text-outline font-medium">${dateStr}</span>
-                                </div>
-                                <h3 class="korean-serif text-2xl md:text-3xl font-medium text-primary mb-3 group-hover:text-surface-tint transition-colors">${post.title}</h3>
-                                <p class="font-body-md text-base text-on-surface-variant line-clamp-3 leading-relaxed">${plainText}</p>
-                            </div>
-                            <div class="w-full md:w-[220px] lg:w-[260px] aspect-[4/3] shrink-0 rounded-xl overflow-hidden bg-surface-variant">
-                                <img src="${firstImg}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-                            </div>
+            return `
+                <a href="detail.html?id=${encodeURIComponent(post.id)}" class="reveal flex flex-col-reverse md:flex-row gap-6 md:gap-8 py-8 border-b border-outline-variant/30 group hover:bg-surface-container-low/50 px-4 md:px-6 rounded-2xl transition-colors">
+                    <div class="flex-1 flex flex-col justify-center">
+                        <div class="flex items-center gap-2.5 mb-3">
+                            <span class="w-8 h-8 rounded-full overflow-hidden bg-white border border-outline-variant/30 shrink-0">
+                                <img src="./assets/icon1.png" alt="" class="w-full h-full object-cover p-0.5" width="32" height="32">
+                            </span>
+                            <span class="font-bold text-sm text-primary">하늘향</span>
+                            <span class="text-xs text-outline font-medium">${HY.fmtDate(post.created_at)}</span>
                         </div>
-                    `;
-                    listContainer.innerHTML += postHTML;
-                });
-            } catch (error) { console.error(error); } finally { initScrollReveal(); }
+                        <h2 class="korean-serif text-2xl md:text-3xl font-medium text-primary mb-3 group-hover:text-surface-tint transition-colors">${HY.esc(post.title)}</h2>
+                        <p class="font-body-md text-base text-on-surface-variant line-clamp-3 leading-relaxed">${HY.esc(plainText)}</p>
+                    </div>
+                    <div class="w-full md:w-[220px] lg:w-[260px] aspect-[4/3] shrink-0 rounded-xl overflow-hidden bg-surface-variant">
+                        <img src="${HY.safeImg(firstImg)}" alt="" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                    </div>
+                </a>
+            `;
         }
+
+        document.getElementById('searchForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            loadMainContents();
+        });
         document.addEventListener('DOMContentLoaded', loadMainContents);
-    </script>
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(registration => console.log('ServiceWorker registration successful'))
-                    .catch(err => console.log('ServiceWorker registration failed: ', err));
-            });
-        }
     </script>
 </body>
 </html>

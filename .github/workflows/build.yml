@@ -1,0 +1,65 @@
+name: Build CSS & Sitemap
+
+# 목적:
+#  - HTML/JS 변경 시 Tailwind CSS(assets/tailwind.css)를 다시 빌드
+#  - 매일 1회 sitemap.xml 을 최신 발행글 기준으로 갱신
+#  - 변경분이 있으면 자동 커밋 → 기존 "브랜치 기반 GitHub Pages 배포"가 그대로 반영
+#
+# GitHub Pages 설정 변경이 필요 없습니다. (Settings > Pages 는 기존 그대로 두세요)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "index.html"
+      - "list.html"
+      - "detail.html"
+      - "offline.html"
+      - "404.html"
+      - "admin/**"
+      - "assets/app.js"
+      - "src/**"
+      - "tailwind.config.js"
+      - "package.json"
+      - "scripts/**"
+  schedule:
+    - cron: "17 18 * * *" # 매일 UTC 18:17 (KST 새벽 3:17) sitemap 갱신
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-css-sitemap
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build Tailwind CSS
+        run: npm run build:css
+
+      - name: Generate sitemap
+        run: npm run build:sitemap
+
+      - name: Commit changes if any
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if [ -n "$(git status --porcelain assets/tailwind.css sitemap.xml)" ]; then
+            git add assets/tailwind.css sitemap.xml
+            git commit -m "build: refresh tailwind.css & sitemap.xml [skip ci]"
+            git push
+          else
+            echo "변경 사항 없음"
+          fi

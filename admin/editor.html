@@ -5,27 +5,22 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>하늘향 - 세트 글쓰기 빌더</title>
     
+    <meta name="robots" content="noindex, nofollow">
     <link rel="icon" type="image/png" href="../assets/favicon.png">
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <script id="tailwind-config">
-        tailwind.config = { theme: { extend: { colors: { "primary": "#17341c", "background": "#fcf9f8", "surface": "#ffffff", "outline": "#737971", "outline-variant": "#c2c8bf" } } } }
-    </script>
-    <style>
-        body { font-family: 'Hanken Grotesk', sans-serif; }
-        .ambient-shadow { box-shadow: 0 12px 32px rgba(27, 61, 47, 0.05); }
-        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard-dynamic-subset.min.css"/>
+    <link rel="stylesheet" href="../assets/tailwind.css">
     <link rel="manifest" href="../manifest.json">
     <meta name="theme-color" content="#17341c">
     <link rel="apple-touch-icon" href="../assets/icon1.png">
 </head>
 <body class="bg-background text-on-background min-h-screen flex flex-col pb-24">
 
-    <header class="bg-surface border-b border-outline-variant/30 sticky top-0 z-50">
+    <header class="bg-surface-container-lowest border-b border-outline-variant/30 sticky top-0 z-50">
         <div class="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
             <div class="flex items-center gap-3">
                 <button onclick="history.back()" class="text-outline hover:text-primary transition-colors flex items-center"><span class="material-symbols-outlined text-2xl">arrow_back</span></button>
@@ -40,12 +35,12 @@
 
     <main class="flex-1 max-w-4xl mx-auto w-full px-4 py-8 space-y-8">
         
-        <div class="bg-surface rounded-2xl border border-outline-variant/30 ambient-shadow p-6 sm:p-10">
+        <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/30 ambient-shadow p-6 sm:p-10">
             <label class="block text-xs font-bold text-primary uppercase tracking-wider mb-2">포스트 대제목</label>
             <input type="text" id="postTitle" placeholder="예시: 무농약으로 직접 키워 구수한 작두콩차" class="w-full text-xl font-bold text-primary placeholder-outline-variant border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary px-4 py-3 bg-transparent">
         </div>
 
-        <div class="bg-surface rounded-2xl border border-outline-variant/30 ambient-shadow p-6 sm:p-10">
+        <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/30 ambient-shadow p-6 sm:p-10">
             <div class="flex items-center justify-between mb-6">
                 <label class="flex items-center gap-1 text-xs font-bold text-primary uppercase tracking-wider">
                     <span class="material-symbols-outlined text-base text-green-600">potted_plant</span> 🌱 1단계: 성장 과정 스텝 빌더
@@ -88,7 +83,7 @@
             </button>
         </div>
 
-        <div class="bg-surface rounded-2xl border border-outline-variant/30 ambient-shadow p-6 sm:p-10">
+        <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/30 ambient-shadow p-6 sm:p-10">
             <div class="mb-6">
                 <label class="flex items-center gap-1 text-xs font-bold text-primary uppercase tracking-wider mb-1">
                     <span class="material-symbols-outlined text-base text-amber-700">local_cafe</span> ☕ 2단계: 제품 특징 및 활용법 카드
@@ -105,10 +100,12 @@
 
     </main>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../assets/app.js"></script>
     <script>
-        const SUPABASE_URL = "https://eyoahkbqfxcisvmkvikp.supabase.co";
-        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV5b2Foa2JxZnhjaXN2bWt2aWtwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk0NDAzODUsImV4cCI6MjA5NTAxNjM4NX0.-JgH5ACzfq-d96VXEZlXovXx0w_uR3gJiwonaushah8";
-        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const supabaseClient = HY.supa();
+        const SUPER_ADMIN_EMAIL = 'eowert72@gmail.com';
+        const escAttr = HY.esc;
 
         let postId = null;
         let growthSteps = []; 
@@ -120,7 +117,24 @@
 
         async function checkAuth() {
             const { data: { session } } = await supabaseClient.auth.getSession();
-            if (!session) window.location.href = 'login.html';
+            if (!session) {
+                window.location.href = 'login.html';
+                return false;
+            }
+            if (session.user.email !== SUPER_ADMIN_EMAIL) {
+                const { data: profile, error } = await supabaseClient
+                    .from('profiles')
+                    .select('is_approved')
+                    .eq('id', session.user.id)
+                    .single();
+                if (error || !profile || profile.is_approved !== true) {
+                    await supabaseClient.auth.signOut();
+                    alert('관리자 승인이 완료되지 않은 계정입니다.');
+                    window.location.href = 'login.html';
+                    return false;
+                }
+            }
+            return true;
         }
 
         function renderSteps() {
@@ -151,7 +165,7 @@
                         imagesHTML += `
                             <div draggable="true" ondragstart="dragStart(event, ${index}, ${i})" ondragover="dragOver(event)" ondrop="drop(event, ${index}, ${i})" class="relative aspect-square rounded-lg border border-outline-variant/30 overflow-hidden group/img bg-surface-variant cursor-move">
                                 <div class="absolute top-1.5 left-1.5 bg-black/60 text-white text-[10px] font-bold px-1.5 py-0.5 rounded z-10 pointer-events-none">${i + 1}</div>
-                                <img src="${img}" class="w-full h-full object-cover pointer-events-none">
+                                <img src="${escAttr(img)}" alt="" class="w-full h-full object-cover pointer-events-none">
                                 <button onclick="removeGrowthImage(${index}, ${i})" class="absolute inset-0 bg-black/50 text-white flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity z-20"><span class="material-symbols-outlined text-xl">delete</span></button>
                             </div>
                         `;
@@ -180,8 +194,8 @@
                         </div>
                         <div class="w-full md:w-2/3 flex flex-col gap-3 pt-2">
                             <span class="text-xs font-bold text-outline">STEP ${String(index + 1).padStart(2, '0')}</span>
-                            <input type="text" value="${step.title}" onchange="updateData('growth', ${index}, 'title', this.value)" placeholder="스텝 소제목" class="w-full border-b border-outline-variant/30 focus:border-primary bg-transparent py-1 text-primary font-bold">
-                            <textarea onchange="updateData('growth', ${index}, 'desc', this.value)" placeholder="설명을 입력하세요..." class="w-full flex-1 border border-outline-variant/30 rounded-lg p-2 text-sm resize-none focus:ring-1 focus:ring-primary">${step.desc}</textarea>
+                            <input type="text" value="${escAttr(step.title)}" onchange="updateData('growth', ${index}, 'title', this.value)" placeholder="스텝 소제목" class="w-full border-b border-outline-variant/30 focus:border-primary bg-transparent py-1 text-primary font-bold">
+                            <textarea onchange="updateData('growth', ${index}, 'desc', this.value)" placeholder="설명을 입력하세요..." class="w-full flex-1 border border-outline-variant/30 rounded-lg p-2 text-sm resize-none focus:ring-1 focus:ring-primary">${escAttr(step.desc)}</textarea>
                         </div>
                     </div>
                 `;
@@ -224,14 +238,14 @@
                     <div class="p-4 border border-outline-variant/50 rounded-xl bg-background relative flex flex-col gap-3 group">
                         <button onclick="removeUsage(${index})" class="absolute top-2 right-2 text-red-400 hover:text-red-600 hidden group-hover:block z-10"><span class="material-symbols-outlined">delete</span></button>
                         <div class="aspect-video bg-gray-100 rounded-lg border border-dashed border-gray-300 flex items-center justify-center overflow-hidden relative">
-                            ${use.img ? `<img src="${use.img}" class="w-full h-full object-cover">` : `<span class="text-sm text-gray-400">사진 등록</span>`}
+                            ${use.img ? `<img src="${escAttr(use.img)}" alt="" class="w-full h-full object-cover">` : `<span class="text-sm text-gray-400">사진 등록</span>`}
                         </div>
                         <div class="flex gap-2 w-full">
                             <button onclick="uploadImage('usage', ${index})" class="flex-1 text-xs bg-amber-100 text-amber-800 py-1.5 rounded font-bold hover:bg-amber-200 transition-colors">카드 사진 업로드</button>
                             ${use.img ? `<button onclick="removeUsageImage(${index})" class="text-xs border border-outline-variant/50 text-outline py-1.5 px-3 rounded font-bold hover:bg-red-50 hover:text-red-500 hover:border-red-200 transition-colors">사진 삭제</button>` : ''}
                         </div>
-                        <input type="text" value="${use.title}" onchange="updateData('usage', ${index}, 'title', this.value)" placeholder="예: 따뜻한 차로" class="w-full border-b border-outline-variant/30 focus:border-primary bg-transparent py-1 text-primary font-bold text-sm">
-                        <textarea onchange="updateData('usage', ${index}, 'desc', this.value)" placeholder="예: 뜨거운 물 1L에 2조각을 넣고..." class="w-full flex-1 border border-outline-variant/30 rounded-lg p-2 text-sm resize-none focus:ring-1 focus:ring-primary h-20">${use.desc}</textarea>
+                        <input type="text" value="${escAttr(use.title)}" onchange="updateData('usage', ${index}, 'title', this.value)" placeholder="예: 따뜻한 차로" class="w-full border-b border-outline-variant/30 focus:border-primary bg-transparent py-1 text-primary font-bold text-sm">
+                        <textarea onchange="updateData('usage', ${index}, 'desc', this.value)" placeholder="예: 뜨거운 물 1L에 2조각을 넣고..." class="w-full flex-1 border border-outline-variant/30 rounded-lg p-2 text-sm resize-none focus:ring-1 focus:ring-primary h-20">${escAttr(use.desc)}</textarea>
                     </div>
                 `;
                 container.innerHTML += useHTML;
@@ -370,7 +384,9 @@
             } catch (error) { alert('저장 실패: ' + error.message); btnPublish.disabled = false; }
         };
 
-        document.addEventListener('DOMContentLoaded', async () => { await checkAuth(); loadPostData(); });
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (await checkAuth()) loadPostData();
+        });
     </script>
     <script>
         if ('serviceWorker' in navigator) {

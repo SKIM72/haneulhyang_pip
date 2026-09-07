@@ -4,75 +4,42 @@
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>하늘향 - 제품 상세소개</title>
+    <meta name="description" id="metaDescription" content="하늘향 제품이 자라고 가공되는 과정과 맛있게 즐기는 방법을 안내합니다."/>
+    <link rel="canonical" id="linkCanonical" href="https://haneulhyang.shop/detail.html"/>
+
+    <meta property="og:type" content="article"/>
+    <meta property="og:site_name" content="하늘향"/>
+    <meta property="og:title" id="ogTitle" content="하늘향 - 제품 상세소개"/>
+    <meta property="og:description" id="ogDescription" content="하늘향 제품의 생산·가공 과정과 활용법."/>
+    <meta property="og:url" id="ogUrl" content="https://haneulhyang.shop/detail.html"/>
+    <meta property="og:image" id="ogImage" content="https://haneulhyang.shop/assets/icon1.png"/>
+    <meta property="og:locale" content="ko_KR"/>
+    <meta name="twitter:card" content="summary_large_image"/>
+
     <link rel="icon" type="image/png" href="./assets/favicon.png">
-
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    "colors": {
-                        "primary": "#17341c", "on-secondary-fixed": "#1c1c19", "inverse-surface": "#313030", "surface-tint": "#47664a",
-                        "on-background": "#1c1b1b", "on-surface": "#1c1b1b", "on-primary-container": "#98ba99", "surface-container": "#f0eded",
-                        "error-container": "#ffdad6", "inverse-primary": "#adcfad", "inverse-on-surface": "#f3f0ef", "surface-dim": "#dcd9d9",
-                        "on-secondary-fixed-variant": "#474743", "on-primary-fixed-variant": "#2f4e33", "secondary": "#5f5e5b",
-                        "surface-container-low": "#f6f3f2", "background": "#fcf9f8", "on-primary-fixed": "#03210b", "surface-container-high": "#eae7e7",
-                        "secondary-container": "#e5e2dd", "tertiary": "#41271f", "on-secondary": "#ffffff", "surface-container-lowest": "#ffffff",
-                        "outline": "#737971", "error": "#ba1a1a", "tertiary-fixed": "#ffdbd0", "outline-variant": "#c2c8bf",
-                        "on-error-container": "#93000a", "secondary-fixed": "#e5e2dd", "surface": "#fcf9f8", "on-error": "#ffffff",
-                        "tertiary-container": "#5a3d34", "on-tertiary-fixed": "#2c160e", "secondary-fixed-dim": "#c9c6c2",
-                        "on-surface-variant": "#424841", "on-tertiary-container": "#d0a99d", "surface-variant": "#e5e2e1",
-                        "primary-container": "#2d4b31", "tertiary-fixed-dim": "#e7bdb1", "on-secondary-container": "#656461",
-                        "primary-fixed": "#c8ecc8", "primary-fixed-dim": "#adcfad", "on-tertiary-fixed-variant": "#5d4037",
-                        "on-tertiary": "#ffffff", "on-primary": "#ffffff", "surface-container-highest": "#e5e2e1", "surface-bright": "#fcf9f8"
-                    },
-                    "borderRadius": { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem", "2xl": "1rem" },
-                    "spacing": { "margin-mobile": "20px", "margin-desktop": "64px", "gutter": "24px", "base": "8px", "container-max": "1200px" },
-                    "fontFamily": {
-                        "headline-lg": ["EB Garamond", "Noto Serif KR", "serif"], 
-                        "label-lg": ["Hanken Grotesk"], 
-                        "body-lg": ["Hanken Grotesk"],
-                        "headline-lg-mobile": ["EB Garamond", "Noto Serif KR", "serif"], 
-                        "label-sm": ["Hanken Grotesk"], 
-                        "headline-md": ["EB Garamond", "Noto Serif KR", "serif"],
-                        "display-lg": ["EB Garamond", "Noto Serif KR", "serif"], 
-                        "body-md": ["Hanken Grotesk"]
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        .headline-font { font-family: 'EB Garamond', serif; }
-        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-        .ambient-shadow { box-shadow: 0 24px 48px rgba(27, 61, 47, 0.08); }
-        .reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.5, 0, 0, 1); }
-        .reveal.active { opacity: 1; transform: translateY(0); }
-        
-        .post-body { color: #2c2c2c; font-size: 0.95rem; line-height: 1.6; font-family: 'Hanken Grotesk', sans-serif; }
-        .post-body p { margin-bottom: 1rem; }
-        .post-body img { border-radius: 0.75rem; margin: 1.25rem auto; box-shadow: 0 10px 30px rgba(0,0,0,0.05); max-width: 90%; }
-        .post-body h1, .post-body h2 { font-family: 'EB Garamond', 'Noto Serif KR', serif; color: #17341c; margin-top: 1.5rem; margin-bottom: 0.75rem; }
-        .post-body h1 { font-size: 1.25rem; font-weight: bold; }
-        .post-body h2 { font-size: 1.1rem; font-weight: bold; }
-        .post-body ul { list-style: disc; padding-left: 1.5rem; margin-bottom: 1.25rem; }
-        .post-body ol { list-style: decimal; padding-left: 1.5rem; margin-bottom: 1.25rem; }
-        .korean-serif { font-family: 'EB Garamond', 'Noto Serif KR', serif !important; }
-        
-        .scrollbar-hide::-webkit-scrollbar { display: none; }
-        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-    </style>
     <link rel="manifest" href="./manifest.json">
     <meta name="theme-color" content="#17341c">
     <link rel="apple-touch-icon" href="./assets/icon1.png">
+
+    <script>
+        (function () {
+            try {
+                var m = localStorage.getItem('hy-theme') || 'system';
+                var d = m === 'dark' || (m === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+                document.documentElement.classList.toggle('dark', d);
+            } catch (e) {}
+        })();
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard-dynamic-subset.min.css"/>
+
+    <link rel="stylesheet" href="./assets/tailwind.css">
+    <script type="application/ld+json" id="jsonLd"></script>
 </head>
 <body class="bg-background text-on-background font-body-md antialiased overflow-x-hidden flex flex-col min-h-screen">
 
@@ -80,22 +47,24 @@
         <div class="relative flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto w-full">
             <a class="flex items-center gap-3 z-10 hover:opacity-90 transition-opacity" href="index.html">
                 <div class="h-12 w-12 md:h-14 md:w-14 rounded-2xl overflow-hidden bg-white shadow-sm border border-outline-variant/20 shrink-0">
-                    <img alt="하늘향 로고" class="h-full w-full object-cover p-1" src="./assets/icon1.png"/>
+                    <img alt="하늘향 로고" class="h-full w-full object-cover p-1" src="./assets/icon1.png" width="56" height="56"/>
                 </div>
                 <span class="headline-font text-base md:text-lg font-bold text-primary tracking-wider">하늘향</span>
             </a>
-            
+
             <div class="absolute inset-x-0 flex justify-center items-center pointer-events-none">
-                <a href="index.html" class="pointer-events-auto font-label-lg text-label-lg tracking-widest text-primary hover:opacity-80 transition-opacity">목록으로</a>
+                <a href="list.html" class="pointer-events-auto font-label-lg text-label-lg tracking-widest text-primary hover:opacity-80 transition-opacity">목록으로</a>
             </div>
-            
-            <div class="flex justify-end items-center z-10">
+
+            <div class="flex justify-end items-center gap-1 z-10">
+                <button id="themeToggle" type="button" class="w-9 h-9 md:w-11 md:h-11 flex items-center justify-center rounded-full text-primary hover:bg-primary/10 transition-colors" aria-label="테마 전환">
+                    <span class="material-symbols-outlined text-xl md:text-2xl">brightness_auto</span>
+                </button>
                 <a href="https://www.band.us/band/67603330/intro" target="_blank" rel="noopener noreferrer" class="group block w-9 h-9 md:w-11 md:h-11 transition-transform duration-300 hover:scale-110" title="하늘향 밴드 바로가기">
                     <img src="./assets/band.png" alt="네이버 밴드" class="w-full h-full object-contain block group-hover:hidden">
                     <img src="./assets/band_hover.png" alt="네이버 밴드" class="w-full h-full object-contain hidden group-hover:block">
                 </a>
             </div>
-            
         </div>
     </nav>
 
@@ -105,8 +74,10 @@
             <p class="font-body-md text-on-surface-variant">소개글을 불러오는 중입니다...</p>
         </div>
 
-        <div id="errorState" class="hidden text-center py-24 max-w-container-max mx-auto">
-            <h2 class="font-headline-md text-error mb-2">페이지를 찾을 수 없습니다</h2>
+        <div id="errorState" class="hidden text-center py-24 max-w-container-max mx-auto px-margin-mobile">
+            <span class="material-symbols-outlined text-5xl text-outline-variant mb-3 block">sentiment_dissatisfied</span>
+            <h1 class="font-headline-md text-error mb-2">페이지를 찾을 수 없습니다</h1>
+            <p class="text-sm text-on-surface-variant mb-5">삭제되었거나 잘못된 QR 코드일 수 있습니다.</p>
             <a href="index.html" class="font-label-lg text-primary underline">홈으로 돌아가기</a>
         </div>
 
@@ -115,7 +86,16 @@
                 <div class="inline-flex items-center justify-center px-4 py-1 mb-4 border border-primary/20 rounded-full bg-surface-container-lowest/50">
                     <span id="postDate" class="font-label-sm text-xs text-primary tracking-widest uppercase"></span>
                 </div>
-                <h1 id="postTitle" class="korean-serif text-2xl md:text-3xl lg:text-4xl text-primary max-w-3xl mx-auto mb-4 leading-tight"></h1>
+                <h1 id="postTitle" class="korean-serif text-2xl md:text-3xl lg:text-4xl text-primary max-w-3xl mx-auto mb-6 leading-tight"></h1>
+
+                <div class="flex flex-wrap items-center justify-center gap-2">
+                    <button id="btnShare" type="button" class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-bold border border-outline-variant text-primary rounded-xl hover:bg-primary hover:text-on-primary hover:border-primary transition-colors">
+                        <span class="material-symbols-outlined text-base">share</span> 공유하기
+                    </button>
+                    <a href="https://www.band.us/band/67603330/intro" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-bold bg-primary text-on-primary rounded-xl hover:opacity-90 transition-opacity">
+                        <span class="material-symbols-outlined text-base">storefront</span> 구매·주문 문의
+                    </a>
+                </div>
             </section>
 
             <section class="px-margin-mobile md:px-margin-desktop pb-20 max-w-container-max mx-auto">
@@ -124,7 +104,7 @@
                 </h2>
                 <div id="growthDynamicRender"></div>
             </section>
-            
+
             <section class="bg-surface-container-lowest py-16 md:py-20 px-margin-mobile md:px-margin-desktop border-t border-surface-container-low">
                 <div class="max-w-4xl mx-auto">
                     <div class="text-center mb-10 reveal">
@@ -132,8 +112,15 @@
                         <h2 class="korean-serif text-2xl md:text-3xl text-primary mb-4">하늘향 제품 활용법</h2>
                         <div class="w-10 h-0.5 bg-primary/30 mx-auto"></div>
                     </div>
-                    
                     <div id="usageRender" class="reveal"></div>
+                </div>
+            </section>
+
+            <section class="px-margin-mobile md:px-margin-desktop py-14 max-w-4xl mx-auto text-center reveal">
+                <p class="text-sm text-on-surface-variant mb-4">이 제품이 마음에 드셨나요? 매장 방문 또는 네이버 밴드로 문의해 주세요.</p>
+                <div class="flex flex-wrap justify-center gap-2">
+                    <a href="list.html" class="inline-flex items-center gap-1.5 px-5 py-2.5 text-sm font-bold border border-outline-variant text-primary rounded-xl hover:bg-primary hover:text-on-primary hover:border-primary transition-colors">다른 제품 이야기 보기</a>
+                    <a href="index.html" class="inline-flex items-center gap-1.5 px-5 py-2.5 text-sm font-bold border border-outline-variant text-primary rounded-xl hover:bg-primary hover:text-on-primary hover:border-primary transition-colors">하늘향 홈</a>
                 </div>
             </section>
         </article>
@@ -142,287 +129,334 @@
     <footer class="w-full py-12 px-margin-mobile md:px-margin-desktop flex flex-col items-center text-center gap-6 bg-surface-container-lowest border-t border-surface-container-low mt-auto">
         <div class="flex flex-col items-center gap-4">
             <a class="block h-14 w-14 rounded-2xl overflow-hidden bg-white shadow-sm border border-outline-variant/20" href="index.html">
-                <img alt="하늘향 로고" class="h-full w-full object-cover p-1" src="./assets/icon1.png"/>
+                <img alt="하늘향 로고" class="h-full w-full object-cover p-1" src="./assets/icon1.png" width="56" height="56"/>
             </a>
-            <span class="font-body-md text-sm text-secondary">© 2026 하늘향 PREMIUM WELLNESS. ALL RIGHTS RESERVED.</span>
+            <span class="font-body-md text-sm text-secondary">© <span id="footerYear">2026</span> 하늘향 PREMIUM WELLNESS. ALL RIGHTS RESERVED.</span>
         </div>
     </footer>
 
-    <script>
-        const SUPABASE_URL = "https://eyoahkbqfxcisvmkvikp.supabase.co";
-        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV5b2Foa2JxZnhjaXN2bWt2aWtwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk0NDAzODUsImV4cCI6MjA5NTAxNjM4NX0.-JgH5ACzfq-d96VXEZlXovXx0w_uR3gJiwonaushah8";
-        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    <div id="toast" class="hidden fixed bottom-5 left-1/2 -translate-x-1/2 z-[100] bg-inverse-surface text-inverse-on-surface text-sm font-medium px-4 py-2.5 rounded-xl shadow-lg"></div>
 
-        function initScrollReveal() {
-            setTimeout(() => {
-                const reveals = document.querySelectorAll(".reveal");
-                const observer = new IntersectionObserver((entries) => {
-                    entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('active'); observer.unobserve(entry.target); } });
-                }, { threshold: 0.1 });
-                reveals.forEach(el => observer.observe(el));
-            }, 100);
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="./assets/app.js"></script>
+    <script>
+        document.getElementById('footerYear').textContent = new Date().getFullYear();
+        HY.registerSW('./sw.js');
+
+        const E = HY.esc;
+        const EM = HY.escMultiline;
+        const IMG = HY.safeImg;
+
+        function toast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.remove('hidden');
+            clearTimeout(t._timer);
+            t._timer = setTimeout(() => t.classList.add('hidden'), 2200);
         }
 
-        // 스크롤 속도와 Easing을 직접 제어하는 커스텀 애니메이션 함수
         function smoothScrollTo(element, targetLeft, duration) {
-            element.dataset.isAnimating = 'true'; // 스크립트 애니메이션 상태 기록
+            element.dataset.isAnimating = 'true';
             const startLeft = element.scrollLeft;
             const distance = targetLeft - startLeft;
             let startTime = null;
-
-            // 스크롤이 넘어가는 동안 CSS snap 기능이 애니메이션을 방해하지 않도록 임시 해제
             element.style.scrollSnapType = 'none';
-
             function animation(currentTime) {
                 if (startTime === null) startTime = currentTime;
                 const timeElapsed = currentTime - startTime;
                 const progress = Math.min(timeElapsed / duration, 1);
-                
-                // easeInOutCubic 알고리즘: 처음엔 천천히, 중간에 빨라졌다, 끝에 다시 천천히 멈춤
-                const ease = progress < 0.5 
-                    ? 4 * progress * progress * progress 
-                    : 1 - Math.pow(-2 * progress + 2, 3) / 2;
-
+                const ease = progress < 0.5 ? 4 * progress * progress * progress : 1 - Math.pow(-2 * progress + 2, 3) / 2;
                 element.scrollLeft = startLeft + distance * ease;
-
-                if (timeElapsed < duration) {
-                    requestAnimationFrame(animation);
-                } else {
-                    // 애니메이션이 끝나면 사용자가 직접 넘길 때를 위해 snap 다시 켬
+                if (timeElapsed < duration) requestAnimationFrame(animation);
+                else {
                     element.style.scrollSnapType = '';
-                    setTimeout(() => { element.dataset.isAnimating = 'false'; }, 50); // 오차 방지 지연 해제
+                    setTimeout(() => { element.dataset.isAnimating = 'false'; }, 50);
                 }
             }
             requestAnimationFrame(animation);
         }
 
         function initAutoSlide() {
-            const containers = document.querySelectorAll('.auto-slide-container');
-            containers.forEach(container => {
+            document.querySelectorAll('.auto-slide-container').forEach(container => {
                 const parent = container.parentElement;
                 const dots = parent.querySelectorAll('.indicator-dot');
                 const prevBtn = parent.querySelector('.nav-prev');
                 const nextBtn = parent.querySelector('.nav-next');
-                const duration = 500; // 화살표 클릭 시 넘어가는 속도 (0.5초)
+                const duration = 500;
 
-                // 1. 스크롤 연동 (모바일 스와이프 & 데스크탑 클릭 공통)
                 if (dots.length) {
                     container.addEventListener('scroll', () => {
-                        const scrollLeft = container.scrollLeft;
-                        const slideWidth = container.clientWidth;
-                        const currentIndex = Math.round(scrollLeft / slideWidth);
-
+                        const currentIndex = Math.round(container.scrollLeft / container.clientWidth);
                         dots.forEach((dot, index) => {
-                            if (index === currentIndex) {
-                                dot.classList.remove('bg-white/40');
-                                dot.classList.add('bg-white', 'scale-125');
-                            } else {
-                                dot.classList.remove('bg-white', 'scale-125');
-                                dot.classList.add('bg-white/40');
-                            }
+                            dot.classList.toggle('bg-white', index === currentIndex);
+                            dot.classList.toggle('scale-125', index === currentIndex);
+                            dot.classList.toggle('bg-white/40', index !== currentIndex);
                         });
                     }, { passive: true });
                 }
-
-                // 2. 데스크탑 좌우 화살표 버튼 클릭 이벤트
                 if (prevBtn && nextBtn) {
                     prevBtn.addEventListener('click', (e) => {
                         e.preventDefault();
-                        const targetLeft = container.scrollLeft - container.clientWidth;
-                        // 0 미만으로 넘어가지 않도록 방지
-                        smoothScrollTo(container, Math.max(0, targetLeft), duration);
+                        smoothScrollTo(container, Math.max(0, container.scrollLeft - container.clientWidth), duration);
                     });
-
                     nextBtn.addEventListener('click', (e) => {
                         e.preventDefault();
-                        const targetLeft = container.scrollLeft + container.clientWidth;
                         const maxScroll = container.scrollWidth - container.clientWidth;
-                        // 최대 스크롤 영역을 넘지 않도록 방지
-                        smoothScrollTo(container, Math.min(maxScroll, targetLeft), duration);
+                        smoothScrollTo(container, Math.min(maxScroll, container.scrollLeft + container.clientWidth), duration);
                     });
+                }
+            });
+        }
+
+        function renderImages(images, title) {
+            const safe = images.map(IMG);
+            const alt = E(title || '');
+            if (safe.length === 1) {
+                return `<img alt="${alt}" loading="lazy" class="w-full h-full object-cover" src="${safe[0]}"/>`;
+            }
+            return `
+                <div class="w-full h-full relative group/slider">
+                    <div class="flex w-full h-full overflow-x-auto snap-x snap-mandatory scrollbar-hide auto-slide-container">
+                        ${safe.map(img => `
+                            <div class="w-full h-full flex-shrink-0 snap-center relative">
+                                <img alt="${alt}" loading="lazy" class="w-full h-full object-cover" src="${img}"/>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="md:hidden absolute top-3 right-3 bg-black/40 text-white text-[0.65rem] font-bold px-2.5 py-1 rounded-full z-20 pointer-events-none backdrop-blur-sm shadow-sm flex items-center gap-1">
+                        <span class="material-symbols-outlined text-[12px]">swipe</span> 슬라이드
+                    </div>
+                    <button class="nav-prev hidden md:flex absolute left-3 top-1/2 transform -translate-y-1/2 bg-black/40 hover:bg-black/70 text-white p-1.5 rounded-full z-20 backdrop-blur-sm transition-all duration-300 items-center justify-center opacity-0 group-hover/slider:opacity-100 cursor-pointer shadow-md" aria-label="이전 사진">
+                        <span class="material-symbols-outlined text-xl">chevron_left</span>
+                    </button>
+                    <button class="nav-next hidden md:flex absolute right-3 top-1/2 transform -translate-y-1/2 bg-black/40 hover:bg-black/70 text-white p-1.5 rounded-full z-20 backdrop-blur-sm transition-all duration-300 items-center justify-center opacity-0 group-hover/slider:opacity-100 cursor-pointer shadow-md" aria-label="다음 사진">
+                        <span class="material-symbols-outlined text-xl">chevron_right</span>
+                    </button>
+                    <div class="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex gap-1.5 z-20 pointer-events-none">
+                        ${safe.map((_, i) => `<div class="indicator-dot w-2 h-2 rounded-full transition-all duration-300 ${i === 0 ? 'bg-white scale-125' : 'bg-white/40'}"></div>`).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderGrowth(post) {
+            const targetRender = document.getElementById('growthDynamicRender');
+            let growthData;
+            try {
+                growthData = JSON.parse(post.content_growth);
+            } catch (e) {
+                targetRender.className = 'post-body bg-surface-container-low p-6 rounded-xl max-w-4xl mx-auto';
+                targetRender.textContent = post.content_growth || '';
+                return;
+            }
+
+            const steps = growthData.steps || [];
+            const layoutType = growthData.layout || 'zigzag';
+
+            const stepImages = (step) =>
+                (step.images && step.images.length > 0) ? step.images : (step.img ? [step.img] : ['./assets/icon1.png']);
+
+            if (layoutType === 'bento') {
+                targetRender.className = 'grid grid-cols-1 md:grid-cols-2 gap-6 relative max-w-4xl mx-auto';
+                targetRender.innerHTML = steps.map((step, index) => {
+                    const images = stepImages(step);
+                    const aspectClass = step.aspect === 'portrait' ? 'aspect-[3/4]' : 'aspect-[4/3]';
+                    const wide = index % 3 === 0;
+                    return `
+                        <div class="${wide ? 'md:col-span-2 flex flex-col md:flex-row' : 'col-span-1 flex flex-col'} reveal bg-surface p-6 rounded-[1.5rem] border border-outline-variant/30 ambient-shadow group hover:-translate-y-1 transition-all">
+                            <div class="${wide ? 'w-full md:w-1/2' : 'w-full'}">
+                                <div class="relative ${aspectClass} rounded-xl overflow-hidden bg-surface-variant w-full mx-auto">
+                                    ${renderImages(images, step.title)}
+                                </div>
+                            </div>
+                            <div class="${wide ? 'w-full md:w-1/2 md:pl-6 md:justify-center pt-4 md:pt-0' : 'w-full pt-4'} flex flex-col gap-2">
+                                <span class="inline-block px-3 py-1 bg-secondary-container/50 text-on-secondary-container rounded-full font-label-sm text-[0.7rem] font-bold tracking-wider w-max mb-1">STEP ${String(index + 1).padStart(2, '0')}</span>
+                                <h3 class="korean-serif text-xl md:text-2xl text-primary font-bold group-hover:text-surface-tint transition-colors">${E(step.title || '')}</h3>
+                                <p class="font-body-md text-sm md:text-base text-on-surface-variant leading-relaxed">${EM(step.desc || '')}</p>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                initAutoSlide();
+                return;
+            }
+
+            targetRender.className = 'flex flex-col gap-8 md:gap-12 relative max-w-4xl mx-auto';
+            const timelineLine = '<div class="hidden md:block absolute left-1/2 top-0 bottom-0 w-px bg-outline-variant/30 transform -translate-x-1/2 z-0"></div>';
+            targetRender.innerHTML = timelineLine + steps.map((step, index) => {
+                const isEven = index % 2 === 0;
+                const images = stepImages(step);
+                const aspectClass = step.aspect === 'portrait' ? 'aspect-[3/4] max-w-[300px]' : 'aspect-[4/3] max-w-[400px]';
+                const textBlock = `
+                    <span class="inline-block px-2.5 py-0.5 bg-secondary-container/50 text-on-secondary-container rounded-full font-label-sm text-[0.7rem] font-bold mb-2 tracking-wider">STEP ${String(index + 1).padStart(2, '0')}</span>
+                    <h3 class="korean-serif text-lg md:text-xl text-primary mb-2">${E(step.title || '')}</h3>
+                    <p class="font-body-md text-sm md:text-base text-on-surface-variant leading-relaxed">${EM(step.desc || '')}</p>
+                `;
+                const imgBlock = `
+                    <div class="w-full md:w-1/2">
+                        <div class="relative ${aspectClass} rounded-xl overflow-hidden ambient-shadow mx-auto ${isEven ? 'md:ml-4 md:mr-auto' : 'md:mr-4 md:ml-auto'} transition-all">
+                            ${renderImages(images, step.title)}
+                        </div>
+                    </div>
+                `;
+                return `
+                    <div class="reveal flex flex-col ${isEven ? 'md:flex-row' : 'md:flex-row-reverse'} items-center gap-6 md:gap-8 relative z-10">
+                        <div class="w-full md:w-1/2 ${isEven ? 'md:text-right md:pr-4' : 'md:text-left md:pl-4'}">${textBlock}</div>
+                        ${imgBlock}
+                    </div>
+                `;
+            }).join('');
+            initAutoSlide();
+        }
+
+        function renderUsage(post) {
+            const usageRender = document.getElementById('usageRender');
+            let usageData;
+            try {
+                usageData = JSON.parse(post.content_usage);
+            } catch (e) {
+                usageRender.className = 'relative bg-surface p-6 md:p-8 rounded-[1.5rem] border border-outline-variant/20 ambient-shadow post-body';
+                usageRender.textContent = post.content_usage || '등록된 안내가 없습니다.';
+                return;
+            }
+
+            if (Array.isArray(usageData) && usageData.length > 0) {
+                usageRender.className = 'grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6';
+                usageRender.innerHTML = usageData.map((use, i) => `
+                    <div class="group flex flex-col bg-surface rounded-[1.25rem] overflow-hidden border border-outline-variant/30 ambient-shadow hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
+                        <div class="aspect-video bg-surface-variant overflow-hidden relative border-b border-outline-variant/20">
+                            <img src="${IMG(use.img)}" alt="" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                            <div class="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-lg text-[0.7rem] font-bold text-primary shadow-sm tracking-wider">
+                                POINT ${String(i + 1).padStart(2, '0')}
+                            </div>
+                        </div>
+                        <div class="p-5 md:p-6 flex-1 flex flex-col bg-surface-container-lowest">
+                            <h3 class="korean-serif text-lg md:text-xl text-primary font-bold mb-2 group-hover:text-surface-tint transition-colors">${E(use.title || '')}</h3>
+                            <p class="font-body-md text-sm text-on-surface-variant leading-relaxed flex-1">${EM(use.desc || '')}</p>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                usageRender.className = 'relative bg-surface p-6 md:p-8 rounded-[1.5rem] border border-outline-variant/20 ambient-shadow';
+                usageRender.innerHTML = '<p class="text-center text-outline text-sm">등록된 활용법이 없습니다.</p>';
+            }
+        }
+
+        function firstImageOf(post) {
+            if (post.thumbnail_url) return post.thumbnail_url;
+            try {
+                const g = JSON.parse(post.content_growth);
+                const s0 = g.steps && g.steps[0];
+                if (s0) {
+                    if (s0.images && s0.images.length) return s0.images[0];
+                    if (s0.img) return s0.img;
+                }
+            } catch (e) {}
+            return 'https://haneulhyang.shop/assets/icon1.png';
+        }
+
+        function plainSummary(post) {
+            try {
+                const g = JSON.parse(post.content_growth);
+                const s0 = g.steps && g.steps[0];
+                if (s0 && s0.desc) return s0.desc.replace(/\s+/g, ' ').trim().slice(0, 140);
+            } catch (e) {}
+            return '하늘향 제품의 생산·가공 과정과 활용법을 안내합니다.';
+        }
+
+        function applyMeta(post, url) {
+            const title = `하늘향 - ${post.title}`;
+            const desc = plainSummary(post);
+            const img = IMG(firstImageOf(post), 'https://haneulhyang.shop/assets/icon1.png');
+            document.title = title;
+            const set = (id, attr, val) => { const el = document.getElementById(id); if (el) el.setAttribute(attr, val); };
+            set('metaDescription', 'content', desc);
+            set('linkCanonical', 'href', url);
+            set('ogTitle', 'content', title);
+            set('ogDescription', 'content', desc);
+            set('ogUrl', 'content', url);
+            set('ogImage', 'content', img);
+
+            document.getElementById('jsonLd').textContent = JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "Article",
+                "headline": post.title,
+                "image": [img],
+                "datePublished": post.created_at,
+                "author": { "@type": "Organization", "name": "하늘향" },
+                "publisher": {
+                    "@type": "Organization",
+                    "name": "하늘향",
+                    "logo": { "@type": "ImageObject", "url": "https://haneulhyang.shop/assets/icon1.png" }
+                },
+                "mainEntityOfPage": url,
+                "description": desc
+            });
+        }
+
+        function initShare(post, url) {
+            document.getElementById('btnShare').addEventListener('click', async () => {
+                const shareData = { title: `하늘향 - ${post.title}`, text: post.title, url };
+                if (navigator.share) {
+                    try { await navigator.share(shareData); } catch (e) {}
+                } else if (navigator.clipboard) {
+                    try {
+                        await navigator.clipboard.writeText(url);
+                        toast('링크가 복사되었습니다');
+                    } catch (e) {
+                        toast('링크: ' + url);
+                    }
+                } else {
+                    toast('링크: ' + url);
                 }
             });
         }
 
         async function loadPostDetail() {
             const postId = new URLSearchParams(window.location.search).get('id');
-            if (!postId) { document.getElementById('loadingIndicator').classList.add('hidden'); document.getElementById('errorState').classList.remove('hidden'); return; }
+            const loading = document.getElementById('loadingIndicator');
+            const errorState = document.getElementById('errorState');
+
+            if (!postId) {
+                loading.classList.add('hidden');
+                errorState.classList.remove('hidden');
+                return;
+            }
 
             try {
-                const { data: post, error } = await supabaseClient.from('posts').select('*').eq('id', postId).eq('status', 'published').single();
-                document.getElementById('loadingIndicator').classList.add('hidden');
-                if (error || !post) { document.getElementById('errorState').classList.remove('hidden'); return; }
+                const { data: post, error } = await HY.supa()
+                    .from('posts')
+                    .select('id, title, content_growth, content_usage, thumbnail_url, created_at')
+                    .eq('id', postId)
+                    .eq('status', 'published')
+                    .single();
 
-                document.getElementById('postTitle').innerText = post.title;
-                document.getElementById('postDate').innerText = new Date(post.created_at).toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' });
-                
-                const targetRender = document.getElementById('growthDynamicRender');
-                try {
-                    const growthData = JSON.parse(post.content_growth);
-                    const steps = growthData.steps || [];
-                    const layoutType = growthData.layout || 'zigzag';
-
-                    const renderImages = (images, title) => {
-                        if(images.length === 1) {
-                            return `<img alt="${title || ''}" class="w-full h-full object-cover" src="${images[0]}"/>`;
-                        } else {
-                            return `
-                                <!-- 전체 영역을 감싸는 group 추가 (마우스 호버 시 버튼 표시용) -->
-                                <div class="w-full h-full relative group/slider">
-                                    <div class="flex w-full h-full overflow-x-auto snap-x snap-mandatory scrollbar-hide auto-slide-container">
-                                        ${images.map(img => `
-                                            <div class="w-full h-full flex-shrink-0 snap-center relative">
-                                                <img alt="${title || ''}" class="w-full h-full object-cover" src="${img}"/>
-                                            </div>
-                                        `).join('')}
-                                    </div>
-                                    
-                                    <!-- 모바일용 스와이프 뱃지 (데스크탑에서는 숨김) -->
-                                    <div class="md:hidden absolute top-3 right-3 bg-black/40 text-white text-[0.65rem] font-bold px-2.5 py-1 rounded-full z-20 pointer-events-none backdrop-blur-sm shadow-sm flex items-center gap-1">
-                                        <span class="material-symbols-outlined text-[12px]">swipe</span> 슬라이드
-                                    </div>
-
-                                    <!-- 데스크탑용 좌우 넘김 버튼 (모바일에서는 숨김, 마우스 올릴 때만 표시) -->
-                                    <button class="nav-prev hidden md:flex absolute left-3 top-1/2 transform -translate-y-1/2 bg-black/40 hover:bg-black/70 text-white p-1.5 rounded-full z-20 backdrop-blur-sm transition-all duration-300 items-center justify-center opacity-0 group-hover/slider:opacity-100 cursor-pointer shadow-md" aria-label="이전 사진">
-                                        <span class="material-symbols-outlined text-xl">chevron_left</span>
-                                    </button>
-                                    <button class="nav-next hidden md:flex absolute right-3 top-1/2 transform -translate-y-1/2 bg-black/40 hover:bg-black/70 text-white p-1.5 rounded-full z-20 backdrop-blur-sm transition-all duration-300 items-center justify-center opacity-0 group-hover/slider:opacity-100 cursor-pointer shadow-md" aria-label="다음 사진">
-                                        <span class="material-symbols-outlined text-xl">chevron_right</span>
-                                    </button>
-
-                                    <!-- 하단 인디케이터(점) -->
-                                    <div class="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex gap-1.5 z-20 pointer-events-none">
-                                        ${images.map((_, i) => `
-                                            <div class="indicator-dot w-2 h-2 rounded-full transition-all duration-300 ${i === 0 ? 'bg-white scale-125' : 'bg-white/40'}"></div>
-                                        `).join('')}
-                                    </div>
-                                </div>
-                            `;
-                        }
-                    };
-
-                    if (layoutType === 'bento') {
-                        targetRender.className = "grid grid-cols-1 md:grid-cols-2 gap-6 relative max-w-4xl mx-auto";
-                        const bentoContent = steps.map((step, index) => {
-                            const images = step.images && step.images.length > 0 ? step.images : (step.img ? [step.img] : ['./assets/icon1.png']);
-                            const aspectClass = step.aspect === 'portrait' ? 'aspect-[3/4]' : 'aspect-[4/3]';
-                            const colSpanClass = (index % 3 === 0) ? 'md:col-span-2 flex flex-col md:flex-row' : 'col-span-1 flex flex-col';
-                            const imgContainerClass = (index % 3 === 0) ? 'w-full md:w-1/2' : 'w-full';
-                            const textContainerClass = (index % 3 === 0) ? 'w-full md:w-1/2 md:pl-6 md:justify-center pt-4 md:pt-0' : 'w-full pt-4';
-
-                            return `
-                                <div class="${colSpanClass} reveal bg-surface p-6 rounded-[1.5rem] border border-outline-variant/30 ambient-shadow group hover:-translate-y-1 transition-all">
-                                    <div class="${imgContainerClass}">
-                                        <div class="relative ${aspectClass} rounded-xl overflow-hidden bg-surface-variant w-full mx-auto">
-                                            ${renderImages(images, step.title)}
-                                        </div>
-                                    </div>
-                                    <div class="${textContainerClass} flex flex-col gap-2">
-                                        <span class="inline-block px-3 py-1 bg-secondary-container/50 text-on-secondary-container rounded-full font-label-sm text-[0.7rem] font-bold tracking-wider w-max mb-1">STEP 0${index + 1}</span>
-                                        <h3 class="korean-serif text-xl md:text-2xl text-primary font-bold group-hover:text-surface-tint transition-colors">${step.title || ''}</h3>
-                                        <p class="font-body-md text-sm md:text-base text-on-surface-variant leading-relaxed">${(step.desc || '').replace(/\n/g, '<br>')}</p>
-                                    </div>
-                                </div>
-                            `;
-                        }).join('');
-                        targetRender.innerHTML = bentoContent;
-                        
-                        // 요소가 화면에 그려진 후 슬라이드 이벤트 부착
-                        initAutoSlide();
-
-                    } else {
-                        targetRender.className = "flex flex-col gap-8 md:gap-12 relative max-w-4xl mx-auto";
-                        const timelineLine = '<div class="hidden md:block absolute left-1/2 top-0 bottom-0 w-[1px] bg-outline-variant/30 transform -translate-x-1/2 z-0"></div>';
-                        
-                        const timelineContent = steps.map((step, index) => {
-                            const isEven = index % 2 === 0;
-                            const images = step.images && step.images.length > 0 ? step.images : (step.img ? [step.img] : ['./assets/icon1.png']);
-                            const aspect = step.aspect || 'landscape';
-                            const aspectClass = aspect === 'portrait' ? 'aspect-[3/4] max-w-[300px]' : 'aspect-[4/3] max-w-[400px]';
-
-                            if (isEven) {
-                                return `
-                                    <div class="reveal flex flex-col md:flex-row items-center gap-6 md:gap-8 relative z-10">
-                                        <div class="w-full md:w-1/2 md:text-right md:pr-4">
-                                            <span class="inline-block px-2.5 py-0.5 bg-secondary-container/50 text-on-secondary-container rounded-full font-label-sm text-[0.7rem] font-bold mb-2 tracking-wider">STEP 0${index + 1}</span>
-                                            <h3 class="korean-serif text-lg md:text-xl text-primary mb-2">${step.title || ''}</h3>
-                                            <p class="font-body-md text-sm md:text-base text-on-surface-variant leading-relaxed">${(step.desc || '').replace(/\n/g, '<br>')}</p>
-                                        </div>
-                                        <div class="w-full md:w-1/2">
-                                            <div class="relative ${aspectClass} rounded-xl overflow-hidden ambient-shadow mx-auto md:ml-4 md:mr-auto transition-all">
-                                                ${renderImages(images, step.title)}
-                                            </div>
-                                        </div>
-                                    </div>
-                                `;
-                            } else {
-                                return `
-                                    <div class="reveal flex flex-col md:flex-row-reverse items-center gap-6 md:gap-8 relative z-10">
-                                        <div class="w-full md:w-1/2 md:text-left md:pl-4">
-                                            <span class="inline-block px-2.5 py-0.5 bg-secondary-container/50 text-on-secondary-container rounded-full font-label-sm text-[0.7rem] font-bold mb-2 tracking-wider">STEP 0${index + 1}</span>
-                                            <h3 class="korean-serif text-lg md:text-xl text-primary mb-2">${step.title || ''}</h3>
-                                            <p class="font-body-md text-sm md:text-base text-on-surface-variant leading-relaxed">${(step.desc || '').replace(/\n/g, '<br>')}</p>
-                                        </div>
-                                        <div class="w-full md:w-1/2">
-                                            <div class="relative ${aspectClass} rounded-xl overflow-hidden ambient-shadow mx-auto md:mr-4 md:ml-auto transition-all">
-                                                ${renderImages(images, step.title)}
-                                            </div>
-                                        </div>
-                                    </div>
-                                `;
-                            }
-                        }).join('');
-                        targetRender.innerHTML = timelineLine + timelineContent;
-                        
-                        // 요소가 화면에 그려진 후 슬라이드 이벤트 부착
-                        initAutoSlide();
-                    }
-                } catch (e) { targetRender.innerHTML = `<div class="post-body bg-surface p-6 rounded-xl">${post.content_growth}</div>`; }
-
-                const usageRender = document.getElementById('usageRender');
-                try {
-                    const usageData = JSON.parse(post.content_usage);
-                    if (Array.isArray(usageData) && usageData.length > 0) {
-                        usageRender.className = "grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6";
-                        usageRender.innerHTML = usageData.map((use, i) => `
-                            <div class="group flex flex-col bg-surface rounded-[1.25rem] overflow-hidden border border-outline-variant/30 ambient-shadow hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
-                                <div class="aspect-video bg-surface-variant overflow-hidden relative border-b border-outline-variant/20">
-                                    <img src="${use.img || './assets/icon1.png'}" alt="${use.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-                                    <div class="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-lg text-[0.7rem] font-bold text-primary shadow-sm tracking-wider">
-                                        POINT 0${i+1}
-                                    </div>
-                                </div>
-                                <div class="p-5 md:p-6 flex-1 flex flex-col bg-white">
-                                    <h3 class="korean-serif text-lg md:text-xl text-primary font-bold mb-2 group-hover:text-surface-tint transition-colors">${use.title}</h3>
-                                    <p class="font-body-md text-sm text-on-surface-variant leading-relaxed flex-1">${(use.desc || '').replace(/\n/g, '<br>')}</p>
-                                </div>
-                            </div>
-                        `).join('');
-                    } else {
-                        usageRender.className = "relative bg-surface p-6 md:p-8 rounded-[1.5rem] border border-outline-variant/20 ambient-shadow";
-                        usageRender.innerHTML = '<p class="text-center text-outline text-sm">등록된 활용법이 없습니다.</p>';
-                    }
-                } catch (e) {
-                    usageRender.className = "relative bg-surface p-6 md:p-8 rounded-[1.5rem] border border-outline-variant/20 ambient-shadow post-body";
-                    usageRender.innerHTML = post.content_usage || '<p class="text-center text-outline text-sm">등록된 안내가 없습니다.</p>';
+                loading.classList.add('hidden');
+                if (error || !post) {
+                    errorState.classList.remove('hidden');
+                    return;
                 }
 
-                document.title = `하늘향 - ${post.title}`;
-                document.getElementById('postArticle').classList.remove('hidden');
-                initScrollReveal();
+                const canonicalUrl = `https://haneulhyang.shop/detail.html?id=${encodeURIComponent(post.id)}`;
 
-            } catch (error) { document.getElementById('errorState').classList.remove('hidden'); }
+                document.getElementById('postTitle').textContent = post.title;
+                document.getElementById('postDate').textContent = HY.fmtDate(post.created_at);
+
+                renderGrowth(post);
+                renderUsage(post);
+                applyMeta(post, canonicalUrl);
+                initShare(post, canonicalUrl);
+
+                document.getElementById('postArticle').classList.remove('hidden');
+                HY.initReveal();
+            } catch (err) {
+                console.error(err);
+                loading.classList.add('hidden');
+                errorState.classList.remove('hidden');
+            }
         }
+
         document.addEventListener('DOMContentLoaded', loadPostDetail);
-    </script>
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(registration => console.log('ServiceWorker registration successful'))
-                    .catch(err => console.log('ServiceWorker registration failed: ', err));
-            });
-        }
     </script>
 </body>
 </html>

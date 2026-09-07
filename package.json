@@ -1,0 +1,17 @@
+{
+  "name": "haneulhyang-site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "하늘향 제품 소개 페이지 (카페 + 농장 직가공 제품 이력/활용 안내)",
+  "scripts": {
+    "build:css": "tailwindcss -i ./src/input.css -o ./assets/tailwind.css --minify",
+    "watch:css": "tailwindcss -i ./src/input.css -o ./assets/tailwind.css --watch",
+    "build:sitemap": "node scripts/generate-sitemap.mjs",
+    "build": "npm run build:css && npm run build:sitemap"
+  },
+  "devDependencies": {
+    "@tailwindcss/container-queries": "^0.1.1",
+    "@tailwindcss/forms": "^0.5.9",
+    "tailwindcss": "^3.4.17"
+  }
+}

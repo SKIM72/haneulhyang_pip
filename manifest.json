@@ -1,23 +1,32 @@
 {
-  "name": "하늘향",
+  "name": "하늘향 - 자연의 시간을 담은 정성",
   "short_name": "하늘향",
-  "description": "자연의 시간을 담은 정성, 하늘향",
+  "description": "직접 로스팅한 커피와 농장 직가공 식품. 제품 생산·가공 과정과 활용법 안내.",
+  "id": "/index.html",
   "start_url": "/index.html",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#fcf9f8",
   "theme_color": "#17341c",
+  "lang": "ko",
   "icons": [
     {
       "src": "assets/icon1.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "assets/icon1.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icon1.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }

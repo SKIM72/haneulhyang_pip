@@ -4,22 +4,21 @@
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>하늘향 - 관리자 로그인</title>
+    <meta name="robots" content="noindex, nofollow">
     <link rel="icon" type="image/png" href="../assets/favicon.png">
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script id="tailwind-config">
-        tailwind.config = {
-            theme: { extend: { colors: { "primary": "#17341c", "background": "#fcf9f8", "surface": "#ffffff", "on-background": "#1c1b1b", "outline": "#737971", "outline-variant": "#c2c8bf" }, fontFamily: { "headline": ["EB Garamond"], "body": ["Hanken Grotesk"] } } }
-        }
-    </script>
-    <style> body { font-family: 'Hanken Grotesk', sans-serif; } .headline-font { font-family: 'EB Garamond', serif; } .ambient-shadow { box-shadow: 0 24px 48px rgba(27, 61, 47, 0.06); } .hidden-view { display: none; } </style>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard-dynamic-subset.min.css"/>
+    <link rel="stylesheet" href="../assets/tailwind.css">
+    <style> .hidden-view { display: none; } </style>
     <link rel="manifest" href="../manifest.json">
     <meta name="theme-color" content="#17341c">
     <link rel="apple-touch-icon" href="../assets/icon1.png">
 </head>
 <body class="bg-background text-on-background min-h-screen flex items-center justify-center px-4">
-    <div class="w-full max-w-md bg-surface p-8 rounded-2xl ambient-shadow border border-outline-variant/30">
+    <div class="w-full max-w-md bg-surface-container-lowest p-8 rounded-2xl ambient-shadow border border-outline-variant/30">
         <div class="text-center mb-8">
             <img src="../assets/icon1.png" alt="하늘향 로고" class="w-28 h-auto mx-auto mb-4 object-contain">
             <h1 class="headline-font text-3xl font-semibold text-primary tracking-wider mb-2">하늘향</h1>
@@ -81,10 +80,10 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../assets/app.js"></script>
     <script>
-        const SUPABASE_URL = "https://eyoahkbqfxcisvmkvikp.supabase.co";
-        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV5b2Foa2JxZnhjaXN2bWt2aWtwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk0NDAzODUsImV4cCI6MjA5NTAxNjM4NX0.-JgH5ACzfq-d96VXEZlXovXx0w_uR3gJiwonaushah8";
-        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const supabaseClient = HY.supa();
 
         window.addEventListener('DOMContentLoaded', async () => {
             const { data: { session } } = await supabaseClient.auth.getSession();
