@@ -118,10 +118,16 @@
             <div class="p-8 flex flex-col items-center justify-center bg-white rounded-b-2xl">
                 <div id="qrCodeContainer" class="mb-5 border border-outline-variant/20 rounded-xl p-2 shadow-sm bg-white min-h-[220px] min-w-[220px] flex items-center justify-center"></div>
                 <p id="qrPostTitle" class="text-sm font-bold text-primary mb-1 text-center w-full truncate px-4"></p>
-                <p class="text-xs text-outline mb-6 text-center">이 QR 코드를 스캔하면 해당 제품의<br>상세 소개 페이지로 즉시 이동합니다.</p>
-                <button id="btnDownloadQr" class="w-full bg-primary text-white py-3 rounded-xl font-medium text-sm tracking-wider hover:opacity-90 active:scale-95 transition-all flex items-center justify-center gap-2 ambient-shadow">
-                    <span class="material-symbols-outlined text-base">download</span> 이미지 다운로드 (PNG)
-                </button>
+                <p id="qrPostUrl" class="text-[0.7rem] text-outline mb-4 text-center break-all px-2"></p>
+                <p class="text-xs text-outline mb-5 text-center">스캔하면 해당 제품의 상세 소개 페이지로 이동합니다.<br>인쇄용으로 고해상도(1024px) 이미지를 받으세요.</p>
+                <div class="w-full flex flex-col gap-2">
+                    <button id="btnDownloadQr" class="w-full bg-primary text-white py-3 rounded-xl font-medium text-sm tracking-wider hover:opacity-90 active:scale-95 transition-all flex items-center justify-center gap-2 ambient-shadow">
+                        <span class="material-symbols-outlined text-base">download</span> 고해상도 이미지 다운로드 (PNG)
+                    </button>
+                    <button id="btnCopyLink" class="w-full border border-outline-variant text-primary py-2.5 rounded-xl font-medium text-sm hover:bg-primary/5 transition-colors flex items-center justify-center gap-2">
+                        <span class="material-symbols-outlined text-base">link</span> 링크 복사
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -190,8 +196,12 @@
                 return;
             }
 
-            listEl.innerHTML = '';
-            profiles.forEach(profile => {
+            if (!profiles || profiles.length === 0) {
+                listEl.innerHTML = '<li class="p-8 text-center text-outline">가입한 계정이 없습니다.</li>';
+                return;
+            }
+
+            listEl.innerHTML = profiles.map(profile => {
                 const isSuperAdmin = profile.email === SUPER_ADMIN_EMAIL;
                 const statusBadge = profile.is_approved 
                     ? `<span class="px-2 py-1 bg-green-100 text-green-800 text-xs font-bold rounded">승인됨</span>`
@@ -203,7 +213,7 @@
                         ${profile.is_approved ? '접근 차단하기' : '가입 승인하기'}
                        </button>`;
 
-                listEl.innerHTML += `
+                return `
                     <li class="p-4 hover:bg-gray-50 flex items-center justify-between gap-4">
                         <div class="flex flex-col sm:flex-row sm:items-center gap-2">
                             <span class="font-medium text-sm text-on-background">${HY.esc(profile.email)}</span>
@@ -212,19 +222,22 @@
                         <div>${toggleBtn}</div>
                     </li>
                 `;
-            });
+            }).join('');
         }
 
         window.toggleApproval = async function(userId, newStatus) {
-            const { error } = await supabaseClient
+            const { data, error } = await supabaseClient
                 .from('profiles')
                 .update({ is_approved: newStatus })
-                .eq('id', userId);
+                .eq('id', userId)
+                .select();
 
             if (error) {
                 alert('상태 변경 실패: ' + error.message);
+            } else if (!data || data.length === 0) {
+                alert('변경 권한이 없습니다. (Supabase RLS 정책에서 최고 관리자만 승인 상태를 바꿀 수 있도록 설정되어 있어야 합니다.)');
             } else {
-                await loadAccounts(); 
+                await loadAccounts();
             }
         };
 
@@ -250,6 +263,13 @@
 
             const { data: posts, error } = await query;
             loadingIndicator.classList.add('hidden');
+
+            if (error) {
+                emptyState.classList.remove('hidden');
+                emptyState.querySelector('h3').textContent = '목록을 불러오지 못했습니다';
+                emptyState.querySelector('p').textContent = error.message;
+                return;
+            }
 
             let filteredPosts = posts || [];
 
@@ -298,37 +318,52 @@
             });
         }
 
+        // 로컬/스테이징에서 미리보더라도 QR 은 항상 운영 도메인을 가리키게 한다.
+        const PROD_ORIGIN = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+            ? 'https://haneulhyang.shop'
+            : location.origin;
+
+        function renderQrCanvas(text, size) {
+            const holder = document.createElement('div');
+            new QRCode(holder, {
+                text, width: size, height: size,
+                colorDark: "#17341c", colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+            return holder.querySelector('canvas');
+        }
+
         window.openQrModal = function(postId, btnElement) {
             const postTitle = btnElement.getAttribute('data-title');
-            
+            const postUrl = `${PROD_ORIGIN}/detail.html?id=${encodeURIComponent(postId)}`;
+
             document.getElementById('qrModal').classList.remove('hidden');
             document.getElementById('qrPostTitle').innerText = postTitle;
+            document.getElementById('qrPostUrl').innerText = postUrl;
 
-            const postUrl = new URL(`../detail.html?id=${postId}`, window.location.href).href;
             const container = document.getElementById('qrCodeContainer');
-            
             container.innerHTML = '';
-            
-            new QRCode(container, {
-                text: postUrl,
-                width: 220,
-                height: 220,
-                colorDark : "#17341c",
-                colorLight : "#ffffff",
-                correctLevel : QRCode.CorrectLevel.H
-            });
+            const preview = renderQrCanvas(postUrl, 220);
+            if (preview) { preview.style.width = '220px'; preview.style.height = '220px'; container.appendChild(preview); }
+
+            const safeTitle = (postTitle || 'product').replace(/[^a-zA-Z0-9가-힣]/g, '_').substring(0, 20) || 'product';
 
             document.getElementById('btnDownloadQr').onclick = function() {
-                const canvas = container.querySelector('canvas');
-                if (canvas) {
-                    const imgData = canvas.toDataURL("image/png");
-                    const link = document.createElement('a');
-                    
-                    const safeTitle = postTitle.replace(/[^a-zA-Z0-9가-힣]/g, '_').substring(0, 15);
-                    
-                    link.download = `하늘향_QR_${safeTitle}.png`;
-                    link.href = imgData;
-                    link.click();
+                const hi = renderQrCanvas(postUrl, 1024);
+                if (!hi) return;
+                const link = document.createElement('a');
+                link.download = `하늘향_QR_${safeTitle}.png`;
+                link.href = hi.toDataURL("image/png");
+                link.click();
+            };
+
+            document.getElementById('btnCopyLink').onclick = async function() {
+                try {
+                    await navigator.clipboard.writeText(postUrl);
+                    this.innerHTML = '<span class="material-symbols-outlined text-base">check</span> 복사됨';
+                    setTimeout(() => { this.innerHTML = '<span class="material-symbols-outlined text-base">link</span> 링크 복사'; }, 1500);
+                } catch (e) {
+                    prompt('아래 링크를 복사하세요', postUrl);
                 }
             };
         };
@@ -345,14 +380,15 @@
         window.editPost = function(id) { window.location.href = `editor.html?id=${id}`; };
 
         window.deletePost = async function(id) {
-            if (confirm('정말 이 소개글을 삭제하시겠습니까?\n(삭제된 게시글은 프론트에서 숨김 처리되며 1달 뒤 자동 영구 삭제됩니다.)')) {
-                // 💡 수정됨: 데이터베이스에서 에러 발생 시 경고창(Alert)을 띄우도록 에러 처리 로직 추가
-                const { error } = await supabaseClient.from('posts').update({ status: 'deleted' }).eq('id', id);
-                if (error) {
-                    alert('데이터베이스 업데이트 실패! Supabase 테이블의 status 컬럼 설정에서 "deleted"를 허용해주세요.\n에러 원인: ' + error.message);
-                } else {
-                    loadPosts(); 
-                }
+            if (!confirm('정말 이 소개글을 삭제하시겠습니까?\n삭제하면 홈페이지에서 즉시 숨겨지며, 한 달 뒤 영구 삭제됩니다.\n(이미 인쇄된 QR 코드는 더 이상 동작하지 않습니다.)')) return;
+
+            const { data, error } = await supabaseClient.from('posts').update({ status: 'deleted' }).eq('id', id).select();
+            if (error) {
+                alert('삭제에 실패했습니다: ' + error.message);
+            } else if (!data || data.length === 0) {
+                alert('삭제 권한이 없거나 세션이 만료되었습니다. 다시 로그인해 주세요.');
+            } else {
+                loadPosts();
             }
         };
 

@@ -106,8 +106,10 @@
         const supabaseClient = HY.supa();
         const SUPER_ADMIN_EMAIL = 'eowert72@gmail.com';
         const escAttr = HY.esc;
+        const uid = () => (window.crypto && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2) + Date.now().toString(36));
 
         let postId = null;
+        let isDirty = false;   // 저장하지 않은 변경이 있는지
         let growthSteps = []; 
         let usageSteps = []; 
 
@@ -139,9 +141,8 @@
 
         function renderSteps() {
             const container = document.getElementById('stepsContainer');
-            container.innerHTML = '';
-            growthSteps.forEach((step, index) => {
-                
+            container.innerHTML = growthSteps.map((step, index) => {
+
                 const images = step.images || (step.img ? [step.img] : []);
                 
                 const ratioHTML = `
@@ -184,7 +185,7 @@
                     ? `<button onclick="uploadImage('growth', ${index})" class="text-xs bg-primary/10 text-primary py-2 rounded font-bold hover:bg-primary/20 w-full transition-colors flex items-center justify-center gap-1"><span class="material-symbols-outlined text-sm">add_photo_alternate</span> 사진 추가 (${images.length}/4)</button>`
                     : `<div class="text-xs text-center text-outline py-2 border border-outline-variant/30 rounded bg-background">최대 4장 업로드 완료</div>`;
 
-                const stepHTML = `
+                return `
                     <div class="p-5 border border-outline-variant/50 rounded-xl bg-background relative flex flex-col md:flex-row gap-4 group">
                         <button onclick="removeStep(${index})" class="absolute top-2 right-2 text-red-400 hover:text-red-600 hidden group-hover:block"><span class="material-symbols-outlined">delete</span></button>
                         <div class="w-full md:w-1/3 flex flex-col">
@@ -199,13 +200,12 @@
                         </div>
                     </div>
                 `;
-                container.innerHTML += stepHTML;
-            });
+            }).join('');
         }
         
-        window.addStep = function() { growthSteps.push({ images: [], title: '', desc: '', aspect: 'landscape' }); renderSteps(); }
-        window.removeStep = function(index) { growthSteps.splice(index, 1); renderSteps(); }
-        window.removeGrowthImage = function(stepIndex, imgIndex) { growthSteps[stepIndex].images.splice(imgIndex, 1); renderSteps(); }
+        window.addStep = function() { growthSteps.push({ images: [], title: '', desc: '', aspect: 'landscape' }); isDirty = true; renderSteps(); }
+        window.removeStep = function(index) { growthSteps.splice(index, 1); isDirty = true; renderSteps(); }
+        window.removeGrowthImage = function(stepIndex, imgIndex) { growthSteps[stepIndex].images.splice(imgIndex, 1); isDirty = true; renderSteps(); }
 
         // 드래그 앤 드롭 함수들
         window.dragStart = function(e, stepIndex, imgIndex) {
@@ -226,15 +226,14 @@
                 const imagesArray = growthSteps[stepIndex].images;
                 const draggedItem = imagesArray.splice(dragSrcImgIndex, 1)[0];
                 imagesArray.splice(targetImgIndex, 0, draggedItem);
+                isDirty = true;
                 renderSteps();
             }
         };
 
         function renderUsage() {
             const container = document.getElementById('usageContainer');
-            container.innerHTML = '';
-            usageSteps.forEach((use, index) => {
-                const useHTML = `
+            container.innerHTML = usageSteps.map((use, index) => `
                     <div class="p-4 border border-outline-variant/50 rounded-xl bg-background relative flex flex-col gap-3 group">
                         <button onclick="removeUsage(${index})" class="absolute top-2 right-2 text-red-400 hover:text-red-600 hidden group-hover:block z-10"><span class="material-symbols-outlined">delete</span></button>
                         <div class="aspect-video bg-gray-100 rounded-lg border border-dashed border-gray-300 flex items-center justify-center overflow-hidden relative">
@@ -247,15 +246,14 @@
                         <input type="text" value="${escAttr(use.title)}" onchange="updateData('usage', ${index}, 'title', this.value)" placeholder="예: 따뜻한 차로" class="w-full border-b border-outline-variant/30 focus:border-primary bg-transparent py-1 text-primary font-bold text-sm">
                         <textarea onchange="updateData('usage', ${index}, 'desc', this.value)" placeholder="예: 뜨거운 물 1L에 2조각을 넣고..." class="w-full flex-1 border border-outline-variant/30 rounded-lg p-2 text-sm resize-none focus:ring-1 focus:ring-primary h-20">${escAttr(use.desc)}</textarea>
                     </div>
-                `;
-                container.innerHTML += useHTML;
-            });
+                `).join('');
         }
-        window.addUsage = function() { usageSteps.push({ img: '', title: '', desc: '' }); renderUsage(); }
-        window.removeUsage = function(index) { usageSteps.splice(index, 1); renderUsage(); }
-        window.removeUsageImage = function(index) { usageSteps[index].img = ''; renderUsage(); }
+        window.addUsage = function() { usageSteps.push({ img: '', title: '', desc: '' }); isDirty = true; renderUsage(); }
+        window.removeUsage = function(index) { usageSteps.splice(index, 1); isDirty = true; renderUsage(); }
+        window.removeUsageImage = function(index) { usageSteps[index].img = ''; isDirty = true; renderUsage(); }
 
         window.updateData = function(type, index, field, value) {
+            isDirty = true;
             if(type === 'growth') {
                 growthSteps[index][field] = value;
                 if(field === 'aspect') renderSteps();
@@ -287,34 +285,35 @@
                         alert(`최대 4장까지만 업로드 가능합니다. 초과된 사진은 제외하고 업로드됩니다.`);
                     }
 
-                    for (const file of filesToUpload) {
-                        const fileExt = file.name.split('.').pop();
-                        const fileName = `${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
-                        const filePath = `post_images/${fileName}`;
+                    for (const rawFile of filesToUpload) {
                         try {
-                            const { error } = await supabaseClient.storage.from('images').upload(filePath, file);
+                            const file = await HY.resizeImage(rawFile, 1600, 0.85);
+                            const ext = file.type === 'image/jpeg' ? 'jpg' : (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '');
+                            const filePath = `post_images/${uid()}.${ext || 'jpg'}`;
+                            const { error } = await supabaseClient.storage.from('images').upload(filePath, file, { contentType: file.type });
                             if (error) throw error;
                             const { data } = supabaseClient.storage.from('images').getPublicUrl(filePath);
-                            
                             growthSteps[index].images.push(data.publicUrl);
-                            renderSteps(); // 업로드되는 순서대로 즉시 화면에 반영
-                        } catch (error) { 
-                            alert('사진 업로드 실패: ' + error.message); 
+                            isDirty = true;
+                            renderSteps();
+                        } catch (error) {
+                            alert('사진 업로드 실패: ' + (error.message || error));
                         }
                     }
                 } else if (type === 'usage') {
-                    const file = input.files[0];
-                    const fileExt = file.name.split('.').pop();
-                    const fileName = `${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
-                    const filePath = `post_images/${fileName}`;
                     try {
-                        const { error } = await supabaseClient.storage.from('images').upload(filePath, file);
+                        const file = await HY.resizeImage(input.files[0], 1600, 0.85);
+                        const ext = file.type === 'image/jpeg' ? 'jpg' : (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '');
+                        const filePath = `post_images/${uid()}.${ext || 'jpg'}`;
+                        const { error } = await supabaseClient.storage.from('images').upload(filePath, file, { contentType: file.type });
                         if (error) throw error;
                         const { data } = supabaseClient.storage.from('images').getPublicUrl(filePath);
-                        
-                        usageSteps[index].img = data.publicUrl; 
+                        usageSteps[index].img = data.publicUrl;
+                        isDirty = true;
                         renderUsage();
-                    } catch (error) { alert('사진 업로드 실패: ' + error.message); }
+                    } catch (error) {
+                        alert('사진 업로드 실패: ' + (error.message || error));
+                    }
                 }
             };
         }
@@ -324,14 +323,22 @@
             postId = urlParams.get('id');
 
             if (postId) {
-                const { data: post } = await supabaseClient.from('posts').select('*').eq('id', postId).single();
-                if (post) {
-                    document.getElementById('postTitle').value = post.title;
-                    
+                const { data: post, error } = await supabaseClient.from('posts').select('*').eq('id', postId).single();
+                if (error || !post) {
+                    alert('글을 불러오지 못했습니다. 목록으로 돌아갑니다.\n' + (error ? error.message : ''));
+                    window.location.href = 'dashboard.html';
+                    return;
+                }
+                {
+                    document.getElementById('postTitle').value = post.title || '';
+
                     try {
                         const growthData = JSON.parse(post.content_growth);
-                        if (growthData.layout) document.querySelector(`input[name="layoutType"][value="${growthData.layout}"]`).checked = true;
-                        
+                        if (growthData.layout) {
+                            const layoutRadio = document.querySelector(`input[name="layoutType"][value="${growthData.layout}"]`);
+                            if (layoutRadio) layoutRadio.checked = true;
+                        }
+
                         if (growthData.steps) {
                             growthSteps = growthData.steps.map(step => {
                                 if (step.img && (!step.images || step.images.length === 0)) step.images = [step.img];
@@ -350,6 +357,7 @@
             }
             if(growthSteps.length === 0) addStep(); else renderSteps();
             if(usageSteps.length === 0) addUsage(); else renderUsage();
+            isDirty = false;
         }
 
         window.savePost = async function(status) {
@@ -375,14 +383,35 @@
                 thumbnail_url: thumbnailUrl
             };
 
-            const btnPublish = document.getElementById('btnPublish'); btnPublish.disabled = true;
-            try {
-                if (postId) await supabaseClient.from('posts').update(postData).eq('id', postId);
-                else await supabaseClient.from('posts').insert([postData]);
-                alert(status === 'published' ? '홈페이지에 정상 발행되었습니다.' : '임시저장 되었습니다.');
-                window.location.href = 'dashboard.html';
-            } catch (error) { alert('저장 실패: ' + error.message); btnPublish.disabled = false; }
+            const btnPublish = document.getElementById('btnPublish');
+            const btnDraft = document.getElementById('btnDraft');
+            btnPublish.disabled = true; btnDraft.disabled = true;
+
+            // Supabase 클라이언트는 오류를 throw 하지 않고 { data, error } 로 돌려준다.
+            // 반드시 error / data 를 직접 확인해야 "저장 안 됐는데 성공 메시지" 를 막을 수 있다.
+            const res = postId
+                ? await supabaseClient.from('posts').update(postData).eq('id', postId).select()
+                : await supabaseClient.from('posts').insert([postData]).select();
+
+            if (res.error || !res.data || res.data.length === 0) {
+                const msg = res.error ? res.error.message
+                    : '저장 권한이 없거나 로그인 세션이 만료되었습니다. 다시 로그인해 주세요.';
+                alert('저장 실패: ' + msg);
+                btnPublish.disabled = false; btnDraft.disabled = false;
+                return;
+            }
+
+            if (!postId && res.data[0] && res.data[0].id) postId = res.data[0].id;
+            isDirty = false;
+            alert(status === 'published' ? '홈페이지에 정상 발행되었습니다.' : '임시저장 되었습니다.');
+            window.location.href = 'dashboard.html';
         };
+
+        // 저장하지 않고 페이지를 벗어나려 하면 경고
+        document.getElementById('postTitle').addEventListener('input', () => { isDirty = true; });
+        window.addEventListener('beforeunload', (e) => {
+            if (isDirty) { e.preventDefault(); e.returnValue = ''; }
+        });
 
         document.addEventListener('DOMContentLoaded', async () => {
             if (await checkAuth()) loadPostData();

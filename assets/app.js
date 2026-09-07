@@ -66,6 +66,50 @@
     }
   }
 
+  // 업로드 전 이미지 축소/압축. 실패하면 원본 File 을 그대로 돌려준다.
+  // maxDim: 가장 긴 변 최대 픽셀, quality: JPEG 품질(0~1)
+  function resizeImage(file, maxDim, quality) {
+    maxDim = maxDim || 1600;
+    quality = quality || 0.85;
+    return new Promise(function (resolve) {
+      if (!file || !/^image\//.test(file.type) || file.type === "image/gif") {
+        return resolve(file);
+      }
+      var url = URL.createObjectURL(file);
+      var img = new Image();
+      img.onload = function () {
+        try {
+          var scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+          if (scale === 1 && file.size < 600 * 1024) {
+            URL.revokeObjectURL(url);
+            return resolve(file);
+          }
+          var canvas = document.createElement("canvas");
+          canvas.width = Math.round(img.width * scale);
+          canvas.height = Math.round(img.height * scale);
+          canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+          canvas.toBlob(
+            function (blob) {
+              URL.revokeObjectURL(url);
+              if (!blob || blob.size >= file.size) return resolve(file);
+              resolve(new File([blob], (file.name || "image").replace(/\.\w+$/, "") + ".jpg", { type: "image/jpeg" }));
+            },
+            "image/jpeg",
+            quality
+          );
+        } catch (e) {
+          URL.revokeObjectURL(url);
+          resolve(file);
+        }
+      };
+      img.onerror = function () {
+        URL.revokeObjectURL(url);
+        resolve(file);
+      };
+      img.src = url;
+    });
+  }
+
   function initReveal() {
     var reveals = document.querySelectorAll(".reveal:not(.active)");
     if (!reveals.length) return;
@@ -163,6 +207,7 @@
     escMultiline: escMultiline,
     fmtDate: fmtDate,
     safeImg: safeImg,
+    resizeImage: resizeImage,
     initReveal: initReveal,
     initThemeToggle: initThemeToggle,
     setTheme: setTheme,
