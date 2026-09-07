@@ -5,7 +5,7 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>하늘향 - 관리자 대시보드</title>
     <meta name="robots" content="noindex, nofollow">
-    <link rel="icon" type="image/png" href="../assets/favicon.png">
+    <link rel="icon" type="image/png" href="../assets/favicon-32.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
@@ -18,7 +18,7 @@
 
     <link rel="manifest" href="../manifest.json">
     <meta name="theme-color" content="#17341c">
-    <link rel="apple-touch-icon" href="../assets/icon1.png">
+    <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
 </head>
 <body class="bg-background text-on-background min-h-screen flex flex-col">
 
@@ -305,7 +305,7 @@
                 li.className = "p-5 sm:p-6 hover:bg-gray-50 transition-colors flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between";
                 li.innerHTML = `
                     <div class="flex-1">
-                        <div class="flex items-center gap-3 mb-1">${statusBadge}<span class="text-xs text-outline">${date}</span></div>
+                        <div class="flex items-center gap-3 mb-1">${statusBadge}<span class="text-xs text-outline">${date}</span><span data-viewcount="${post.id}" class="text-xs text-outline font-medium inline-flex items-center gap-0.5"></span></div>
                         <h2 class="text-lg font-semibold text-primary break-keep leading-snug">${safeTitle}</h2>
                     </div>
                     <div class="flex items-center gap-2 w-full sm:w-auto">
@@ -316,6 +316,23 @@
                 `;
                 postsList.appendChild(li);
             });
+
+            loadViewCounts(filteredPosts.map(p => p.id));
+        }
+
+        // 제품별 조회수 표시. post_views 테이블이 없으면 조용히 생략.
+        async function loadViewCounts(ids) {
+            await Promise.all(ids.map(async id => {
+                try {
+                    const { count, error } = await supabaseClient
+                        .from('post_views')
+                        .select('id', { count: 'exact', head: true })
+                        .eq('post_id', id);
+                    if (error || typeof count !== 'number') return;
+                    const el = document.querySelector(`[data-viewcount="${id}"]`);
+                    if (el) el.innerHTML = `· <span class="material-symbols-outlined text-[13px] leading-none">visibility</span> ${count.toLocaleString()}`;
+                } catch (e) {}
+            }));
         }
 
         // 로컬/스테이징에서 미리보더라도 QR 은 항상 운영 도메인을 가리키게 한다.
@@ -371,6 +388,18 @@
         window.closeQrModal = function() {
             document.getElementById('qrModal').classList.add('hidden');
         };
+
+        // 모달: 배경 클릭 / ESC 로 닫기
+        ['accountModal', 'qrModal'].forEach(id => {
+            const m = document.getElementById(id);
+            m.addEventListener('click', e => { if (e.target === m) m.classList.add('hidden'); });
+        });
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') {
+                document.getElementById('accountModal').classList.add('hidden');
+                document.getElementById('qrModal').classList.add('hidden');
+            }
+        });
 
         document.getElementById('btnLogout').addEventListener('click', async () => {
             await supabaseClient.auth.signOut();

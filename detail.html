@@ -16,10 +16,10 @@
     <meta property="og:locale" content="ko_KR"/>
     <meta name="twitter:card" content="summary_large_image"/>
 
-    <link rel="icon" type="image/png" href="./assets/favicon.png">
+    <link rel="icon" type="image/png" href="./assets/favicon-32.png">
     <link rel="manifest" href="./manifest.json">
     <meta name="theme-color" content="#17341c">
-    <link rel="apple-touch-icon" href="./assets/icon1.png">
+    <link rel="apple-touch-icon" href="./assets/apple-touch-icon.png">
 
     <script>
         (function () {
@@ -97,6 +97,8 @@
                     </a>
                 </div>
             </section>
+
+            <section id="metaSection" class="hidden reveal px-margin-mobile md:px-margin-desktop pb-8 max-w-4xl mx-auto"></section>
 
             <section class="px-margin-mobile md:px-margin-desktop pb-20 max-w-container-max mx-auto">
                 <h2 class="reveal korean-serif text-xl md:text-2xl text-primary mb-6 text-center md:text-left border-b border-outline-variant/30 pb-3">
@@ -342,6 +344,48 @@
             }
         }
 
+        function renderMeta(post) {
+            const el = document.getElementById('metaSection');
+            let meta = {};
+            try { meta = JSON.parse(post.content_meta || '{}') || {}; } catch (e) { meta = {}; }
+            if (typeof meta !== 'object') meta = {};
+
+            const rows = [
+                ['수확 시기', meta.harvest, 'calendar_month'],
+                ['원산지', meta.origin, 'pin_drop'],
+                ['가공 방식', meta.process, 'blender'],
+                ['보관 방법', meta.storage, 'kitchen'],
+                ['유통기한', meta.expiry, 'schedule'],
+            ].filter(r => r[1] && String(r[1]).trim());
+            const caution = (meta.caution || '').trim();
+
+            if (rows.length === 0 && !caution) return;
+
+            el.innerHTML = `
+                <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-5 md:p-6 ambient-shadow">
+                    <h2 class="korean-serif text-base md:text-lg text-primary font-bold mb-4 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-xl">info</span> 제품 한눈에
+                    </h2>
+                    ${rows.length ? `<dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3.5">
+                        ${rows.map(([k, v, icon]) => `
+                            <div class="flex gap-3">
+                                <span class="material-symbols-outlined text-lg text-outline shrink-0 mt-0.5">${icon}</span>
+                                <div>
+                                    <dt class="text-[0.7rem] font-bold text-outline tracking-wider uppercase mb-0.5">${E(k)}</dt>
+                                    <dd class="text-sm text-on-surface-variant leading-relaxed">${EM(v)}</dd>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </dl>` : ''}
+                    ${caution ? `<div class="${rows.length ? 'mt-4' : ''} flex gap-2.5 text-sm bg-tertiary-fixed/40 text-on-tertiary-fixed-variant rounded-xl p-3.5 border border-tertiary-fixed/60">
+                        <span class="material-symbols-outlined text-lg shrink-0">info</span>
+                        <p class="leading-relaxed"><span class="font-bold">섭취 시 주의</span> · ${EM(caution)}</p>
+                    </div>` : ''}
+                </div>
+            `;
+            el.classList.remove('hidden');
+        }
+
         function firstImageOf(post) {
             if (post.thumbnail_url) return post.thumbnail_url;
             try {
@@ -412,6 +456,19 @@
             });
         }
 
+        // 제품별 조회수 기록 (관리자 대시보드에서 확인).
+        // post_views 테이블/정책이 없으면 조용히 무시된다.
+        function logView(postId) {
+            try {
+                const key = 'hy-viewed-' + postId;
+                if (sessionStorage.getItem(key)) return;
+                sessionStorage.setItem(key, '1');
+            } catch (e) {}
+            try {
+                HY.supa().from('post_views').insert({ post_id: postId }).then(function () {}, function () {});
+            } catch (e) {}
+        }
+
         async function loadPostDetail() {
             const postId = new URLSearchParams(window.location.search).get('id');
             const loading = document.getElementById('loadingIndicator');
@@ -426,7 +483,7 @@
             try {
                 const { data: post, error } = await HY.supa()
                     .from('posts')
-                    .select('id, title, content_growth, content_usage, thumbnail_url, created_at')
+                    .select('*')
                     .eq('id', postId)
                     .eq('status', 'published')
                     .single();
@@ -442,10 +499,12 @@
                 document.getElementById('postTitle').textContent = post.title;
                 document.getElementById('postDate').textContent = HY.fmtDate(post.created_at);
 
+                renderMeta(post);
                 renderGrowth(post);
                 renderUsage(post);
                 applyMeta(post, canonicalUrl);
                 initShare(post, canonicalUrl);
+                logView(post.id);
 
                 document.getElementById('postArticle').classList.remove('hidden');
                 HY.initReveal();

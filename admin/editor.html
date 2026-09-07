@@ -6,7 +6,7 @@
     <title>하늘향 - 세트 글쓰기 빌더</title>
     
     <meta name="robots" content="noindex, nofollow">
-    <link rel="icon" type="image/png" href="../assets/favicon.png">
+    <link rel="icon" type="image/png" href="../assets/favicon-32.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="../assets/tailwind.css">
     <link rel="manifest" href="../manifest.json">
     <meta name="theme-color" content="#17341c">
-    <link rel="apple-touch-icon" href="../assets/icon1.png">
+    <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
 </head>
 <body class="bg-background text-on-background min-h-screen flex flex-col pb-24">
 
@@ -38,6 +38,39 @@
         <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/30 ambient-shadow p-6 sm:p-10">
             <label class="block text-xs font-bold text-primary uppercase tracking-wider mb-2">포스트 대제목</label>
             <input type="text" id="postTitle" placeholder="예시: 무농약으로 직접 키워 구수한 작두콩차" class="w-full text-xl font-bold text-primary placeholder-outline-variant border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary px-4 py-3 bg-transparent">
+        </div>
+
+        <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/30 ambient-shadow p-6 sm:p-10">
+            <label class="flex items-center gap-1 text-xs font-bold text-primary uppercase tracking-wider mb-1">
+                <span class="material-symbols-outlined text-base">info</span> 제품 한눈에 (선택)
+            </label>
+            <p class="text-xs text-outline mb-5">입력한 항목만 상세 페이지 상단에 표로 표시됩니다. 비워두면 표시되지 않습니다.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-outline mb-1">수확 시기</label>
+                    <input type="text" id="meta_harvest" placeholder="예: 2025년 10~11월" class="w-full px-3 py-2 text-sm border border-outline-variant/60 rounded-lg focus:ring-1 focus:ring-primary bg-background">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-outline mb-1">원산지 / 재배지</label>
+                    <input type="text" id="meta_origin" placeholder="예: 전남 고흥 하늘향 직영 농장" class="w-full px-3 py-2 text-sm border border-outline-variant/60 rounded-lg focus:ring-1 focus:ring-primary bg-background">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-outline mb-1">가공 방식</label>
+                    <input type="text" id="meta_process" placeholder="예: 세척 후 저온 건조, 볶음" class="w-full px-3 py-2 text-sm border border-outline-variant/60 rounded-lg focus:ring-1 focus:ring-primary bg-background">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-outline mb-1">보관 방법</label>
+                    <input type="text" id="meta_storage" placeholder="예: 직사광선을 피해 서늘한 곳, 개봉 후 냉장" class="w-full px-3 py-2 text-sm border border-outline-variant/60 rounded-lg focus:ring-1 focus:ring-primary bg-background">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-outline mb-1">유통기한</label>
+                    <input type="text" id="meta_expiry" placeholder="예: 제조일로부터 12개월" class="w-full px-3 py-2 text-sm border border-outline-variant/60 rounded-lg focus:ring-1 focus:ring-primary bg-background">
+                </div>
+            </div>
+            <div class="mt-4">
+                <label class="block text-xs font-bold text-outline mb-1">섭취 시 주의사항 (알레르기 등)</label>
+                <textarea id="meta_caution" rows="2" placeholder="예: 땅콩·견과류를 사용하는 시설에서 생산되었습니다." class="w-full px-3 py-2 text-sm border border-outline-variant/60 rounded-lg focus:ring-1 focus:ring-primary bg-background resize-none"></textarea>
+            </div>
         </div>
 
         <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/30 ambient-shadow p-6 sm:p-10">
@@ -353,11 +386,32 @@
                         const usageData = JSON.parse(post.content_usage);
                         if(Array.isArray(usageData)) usageSteps = usageData;
                     } catch(e) { usageSteps = []; }
+
+                    try {
+                        const meta = JSON.parse(post.content_meta || '{}') || {};
+                        setMetaFields(meta);
+                    } catch (e) { /* content_meta 없음 */ }
                 }
             }
             if(growthSteps.length === 0) addStep(); else renderSteps();
             if(usageSteps.length === 0) addUsage(); else renderUsage();
             isDirty = false;
+        }
+
+        const META_FIELDS = ['harvest', 'origin', 'process', 'storage', 'expiry', 'caution'];
+        function getMetaFields() {
+            const meta = {};
+            META_FIELDS.forEach(k => {
+                const v = (document.getElementById('meta_' + k).value || '').trim();
+                if (v) meta[k] = v;
+            });
+            return meta;
+        }
+        function setMetaFields(meta) {
+            META_FIELDS.forEach(k => {
+                const el = document.getElementById('meta_' + k);
+                if (el) el.value = (meta && meta[k]) ? meta[k] : '';
+            });
         }
 
         window.savePost = async function(status) {
@@ -367,7 +421,7 @@
             if (!title) return alert('대제목을 입력해 주세요.');
 
             const growthPayload = JSON.stringify({ layout: selectedLayout, steps: growthSteps });
-            const usagePayload = JSON.stringify(usageSteps); 
+            const usagePayload = JSON.stringify(usageSteps);
 
             let thumbnailUrl = null;
             if (growthSteps.length > 0) {
@@ -377,8 +431,9 @@
 
             const postData = {
                 title: title,
-                content_growth: growthPayload, 
+                content_growth: growthPayload,
                 content_usage: usagePayload,
+                content_meta: JSON.stringify(getMetaFields()),
                 status: status,
                 thumbnail_url: thumbnailUrl
             };
@@ -389,9 +444,18 @@
 
             // Supabase 클라이언트는 오류를 throw 하지 않고 { data, error } 로 돌려준다.
             // 반드시 error / data 를 직접 확인해야 "저장 안 됐는데 성공 메시지" 를 막을 수 있다.
-            const res = postId
-                ? await supabaseClient.from('posts').update(postData).eq('id', postId).select()
-                : await supabaseClient.from('posts').insert([postData]).select();
+            const doSave = (payload) => postId
+                ? supabaseClient.from('posts').update(payload).eq('id', postId).select()
+                : supabaseClient.from('posts').insert([payload]).select();
+
+            let res = await doSave(postData);
+
+            // content_meta 컬럼이 아직 없으면(마이그레이션 전) 해당 항목만 빼고 재시도
+            if (res.error && /content_meta|column|schema cache/i.test(res.error.message || '')) {
+                console.warn('content_meta 컬럼이 없어 "제품 한눈에" 항목을 제외하고 저장합니다. docs/보안-점검.md 의 마이그레이션을 실행하세요.');
+                const { content_meta, ...fallback } = postData;
+                res = await doSave(fallback);
+            }
 
             if (res.error || !res.data || res.data.length === 0) {
                 const msg = res.error ? res.error.message
@@ -408,7 +472,7 @@
         };
 
         // 저장하지 않고 페이지를 벗어나려 하면 경고
-        document.getElementById('postTitle').addEventListener('input', () => { isDirty = true; });
+        document.querySelector('main').addEventListener('input', () => { isDirty = true; });
         window.addEventListener('beforeunload', (e) => {
             if (isDirty) { e.preventDefault(); e.returnValue = ''; }
         });

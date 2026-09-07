@@ -52,6 +52,11 @@ npx serve .          # 또는  python3 -m http.server
 **중요:** anon 키는 공개돼도 되지만, 실제 접근 제어는 Supabase RLS 정책이 담당합니다.
 반드시 [`docs/보안-점검.md`](docs/보안-점검.md) 를 따라 정책을 확인/적용하세요.
 
+## Supabase 마이그레이션
+
+"제품 한눈에" 정보와 "조회수" 기능을 켜려면 [`docs/supabase-마이그레이션.md`](docs/supabase-마이그레이션.md)
+의 SQL 을 한 번 실행하세요. (안 해도 나머지 기능은 정상 동작)
+
 ## 알려진 한계
 
 - **카카오톡 등 링크 미리보기**: `detail.html` 은 브라우저에서 JS로 그려지므로,
